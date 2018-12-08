@@ -46,7 +46,7 @@ class Game:
         self.S_EXITGAME = 'EXIT GAME'
         self.S_UPDATEGAME = 'UPDATE GAME'
 
-        self.S_VERSION = 'Version A - 0.1'
+        self.S_VERSION = f'Version A - {self.G_VERSION}'
         self.S_HELP = 'SHOW HELP'
         self.S_UPDATE = 'AUTO-UPDATE'
         self.S_LOGGING = 'LOG EVENTS'
@@ -54,6 +54,8 @@ class Game:
         self.S_LIVES = '3 LIVES REMAINING'
         self.S_POSITION = 'SHOW POSITION'
         self.S_PAGE = 'SHOW PAGE'
+        self.S_ENEMY = 'SPAWN ENEMIES'
+        self.S_PEER = 'PEER-TO-PEER'
 
         self.C_RED = '#E74C3C'
         self.C_GREEN = '#2ECC71'
@@ -140,9 +142,13 @@ class Game:
 
         self.SettingsPosition = Label(self.GameWindow, text=self.S_POSITION, font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
         self.SettingsPage = Label(self.GameWindow, text=self.S_PAGE, font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
+        self.SettingsEnemy = Label(self.GameWindow, text=self.S_ENEMY, font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
+        self.SettingsPeer = Label(self.GameWindow, text=self.S_PEER, font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
 
         self.SettingsPositionSwitch = Switch(self.GameWindow)
         self.SettingsPageSwitch = Switch(self.GameWindow)
+        self.SettingsEnemySwitch = Switch(self.GameWindow)
+        self.SettingsPeerSwitch = Switch(self.GameWindow)
 
         self.SettingsHelpSwitch = Switch(self.GameWindow)
         self.SettingsUpdateSwitch = Switch(self.GameWindow)
@@ -432,9 +438,9 @@ class Game:
                           self.whiteFloor10, self.whiteFloor11, self.Slider, self.Slider2]
 
     def loadConfiguration(self):
-        configEntries = ['Show-Help', 'Auto-Update', 'Log-Events', 'Allow-Cheats', 'Show-Position', 'Show-Pages']
-        configValues = [0, 0, 0, 0, 0, 0]
-        configSwitches = [self.SettingsHelpSwitch, self.SettingsUpdateSwitch, self.SettingsLogSwitch, self.SettingsCheatSwitch, self.SettingsPositionSwitch, self.SettingsPageSwitch]
+        configEntries = ['Show-Help', 'Auto-Update', 'Log-Events', 'Allow-Cheats', 'Show-Position', 'Show-Pages', 'Spawn-Enemies', 'Peer-to-Peer']
+        configValues = [0, 0, 0, 0, 0, 0, 0, 0]
+        configSwitches = [self.SettingsHelpSwitch, self.SettingsUpdateSwitch, self.SettingsLogSwitch, self.SettingsCheatSwitch, self.SettingsPositionSwitch, self.SettingsPageSwitch, self.SettingsEnemySwitch, self.SettingsPeerSwitch]
 
         for value in configEntries:
             configValues[configEntries.index(value)] = int(self.Configuration['Settings'][value])
@@ -663,7 +669,7 @@ class Game:
         self.THREAD_CONFIG.start()
         self.GameTitle.config(text='SETTINGS')
         self.GameTitle.place(relx=.05, rely=.1)
-        self.SettingsVersion.place(relx=.75, rely=.85)
+        self.SettingsVersion.place(relx=.8, rely=.85)
 
         self.SettingsHelp.place(relx=.051, rely=.35)
         self.SettingsHelpSwitch.place(0.275, 0.35)
@@ -682,6 +688,12 @@ class Game:
 
         self.SettingsPage.place(relx=.38, rely=.45)
         self.SettingsPageSwitch.place(0.604, 0.45)
+
+        self.SettingsEnemy.place(relx=.38, rely=.55)
+        self.SettingsEnemySwitch.place(0.604, 0.55)
+
+        self.SettingsPeer.place(relx=.38, rely=.65)
+        self.SettingsPeerSwitch.place(0.604, 0.65)
 
         Animate(self.GameWindow, .05, .1).scroll()
 
