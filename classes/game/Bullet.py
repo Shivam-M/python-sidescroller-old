@@ -19,7 +19,7 @@ class Bullet:
         self.setMovement(0)
 
         self.THREAD_MOVEMENT = Thread(target=self.updateLocation, args=())
-        #self.THREAD_AROUND = Thread(target=self.checkSurroundings, args=())
+        # self.THREAD_AROUND = Thread(target=self.checkSurroundings, args=())
 
     def checkSurroundings(self):
         while True:
@@ -38,7 +38,6 @@ class Bullet:
                     self.BulletItem = None
                     break
             sleep(0.01)
-
 
     def updateLocation(self):
         while True:

@@ -14,18 +14,18 @@ class Coin:
 
         self.Shooting = True
 
-        gamePhoto = PhotoImage(file="../assets/images/game-icon.gif", master=self.Window)
-        gamePhoto = gamePhoto.subsample(5)
+        # gamePhoto = PhotoImage(file="../assets/images/game-icon.gif", master=self.Window)
+        # gamePhoto = gamePhoto.subsample(5)
 
-        self.CoinItem = Button(self.Window, image=gamePhoto, bd=0, command=lambda: (self.Window.destroy()))
-        self.CoinItem.place(relx=.05, rely=.22)
+        # self.CoinItem = Button(self.Window, image=gamePhoto, bd=0, command=lambda: (self.Window.destroy()))
+        # self.CoinItem.place(relx=.05, rely=.22)
         
         # self.CoinItem = Button(self.Window, image=gamePhoto, width=10, height=10)
 
-        #elf.setMovement(0)
+        # self.setMovement(0)
 
-        #self.THREAD_MOVEMENT = Thread(target=self.updateLocation, args=())
-        #self.THREAD_AROUND = Thread(target=self.checkSurroundings, args=())
+        # self.THREAD_MOVEMENT = Thread(target=self.updateLocation, args=())
+        # self.THREAD_AROUND = Thread(target=self.checkSurroundings, args=())
 
     def checkSurroundings(self):
         while True:

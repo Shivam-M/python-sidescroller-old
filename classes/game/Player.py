@@ -30,7 +30,8 @@ class Player:
             self.setVelocityX(0.005)
         elif ty == 0:
             self.setVelocityX(-0.005)
-        jThread = Thread(target=self.jumpEvent, args=()).start()
+        jThread = Thread(target=self.jumpEvent, args=())
+        jThread.start()
 
     def jumpEvent(self):
         originalLocation = self.getLocation()
