@@ -1,8 +1,9 @@
 import socket
 import select
 import random
-from tools.logger import Logger
 from threading import Thread
+
+from classes.tools.Logger import Logger
 
 
 class Host:

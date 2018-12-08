@@ -2,6 +2,8 @@ from tkinter import *
 from threading import Thread
 from time import sleep
 
+from classes.game.Bullet import Bullet
+
 
 class Enemy:
     def __init__(self, w, p, c='red', g=None):
@@ -60,7 +62,6 @@ class Enemy:
             sleep(0.02)
 
     def startShooting(self):
-        from tools.Bullet import Bullet
         while True:
             if not self.BulletCooldown:
                 if self.ShootingLeft:

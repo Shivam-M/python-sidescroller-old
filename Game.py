@@ -4,15 +4,16 @@ from threading import Thread, active_count
 from time import sleep
 from tkinter import *
 
-from tools.error import Error
-from tools.Player import Player
-from tools.Switch import Switch
-from tools.Network import Host, Join
-from tools.Slider import Slider
-from tools.animator import Animate
-from tools.Bullet import Bullet
+from classes.tools.Error import Error
+from classes.tools.Logger import Logger
+from classes.tools.Animator import Animate
 
-from tools.logger import Logger
+from classes.game.Player import Player
+from classes.game.Switch import Switch
+from classes.game.Network import Host, Join
+from classes.game.Slider import Slider
+from classes.game.Enemy import Enemy
+from classes.game.Bullet import Bullet
 
 
 class Game:
@@ -70,7 +71,7 @@ class Game:
         self.CFG_PAGES = 0
 
         self.Configuration = configparser.ConfigParser()
-        self.Configuration.read('game-config.ini')
+        self.Configuration.read('config/game/game-config.ini')
 
         self.whiteFloor = None
         self.whiteFloor2 = None
@@ -605,7 +606,6 @@ class Game:
         self.setGamemode(t)
         if t == 0:
             self.drawStart()
-            from tools.Enemy import Enemy
             Test2 = Enemy(self.GameWindow, self.P, c=self.C_RED, g=self)
             Test2.draw(.45, 0.755)
             # Test3 = Enemy(self.GameWindow, self.P, c=self.C_RED, g=self)

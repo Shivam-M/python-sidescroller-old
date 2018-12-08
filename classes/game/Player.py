@@ -1,8 +1,6 @@
 from tkinter import *
 from threading import Thread
 from time import sleep
-from tools.animator import Animate
-# from tools.error import Error
 
 
 class Player:
