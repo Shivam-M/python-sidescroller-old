@@ -242,13 +242,14 @@ class Game:
 
     def updateGame(self):
 
-        def getFolderSize(d='..'):
+        def getFolderSize(d=os.getcwd()):
             total_size = 0
             for dirpath, dirnames, filenames in os.walk(d):
                 for f in filenames:
                     fp = os.path.join(dirpath, f)
                     total_size += os.path.getsize(fp)
             return total_size
+
 
         self.clearScreen()
         self.updateTitle = Label(self.GameWindow, text='UPDATE GAME', font=self.W_FONT, bg=self.W_BG, fg=self.W_FG)
@@ -268,7 +269,7 @@ class Game:
         self.currentSizeV.place(relx=.82, rely=.35)
         self.latestVersionV = Label(self.GameWindow, text='Version 1.01', font=self.W_FONT2, bg=self.W_BG, fg=self.W_FG)
         self.latestVersionV.place(relx=.28, rely=.45)
-        self.latestSizeV = Label(self.GameWindow, text='29381 KB', font=self.W_FONT2, bg=self.W_BG, fg=self.W_FG)
+        self.latestSizeV = Label(self.GameWindow, text='-- KB', font=self.W_FONT2, bg=self.W_BG, fg=self.W_FG)
         self.latestSizeV.place(relx=.82, rely=.45)
 
         self.updateInformation = Label(self.GameWindow, text='Information: Current files and program data will be stored in a backup folder in the above directory.', font=('MS PGothic', 10, 'bold'), bg=self.W_BG, fg=self.C_BLUE)
@@ -280,11 +281,11 @@ class Game:
         self.filledBar = Label(self.GameWindow, text=' ', font=('MS PGothic', 4, 'bold'), bg=self.W_FG, fg=self.W_FG, width=40)
         self.filledBar.place(relx=.05, rely=.88)
 
-        self.percentageValue = Label(self.GameWindow, text='22%', font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY, anchor='e')
+        self.percentageValue = Label(self.GameWindow, text='0%', font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY, anchor='e')
         self.percentageValue.place(relx=.91, rely=.8)
 
         self.updateProgress = Label(self.GameWindow, text='UPDATING GAME...', font=('MS PGothic', 18, 'bold'), bg=self.W_BG, fg=self.C_LIGHTGRAY, anchor='e')
-        # self.updateProgress.place(relx=.049, rely=.77)
+        self.updateProgress.place(relx=.049, rely=.77)
 
         self.updateButton = Button(self.GameWindow, text='UPDATE GAME', font=self.W_FONT2, fg=self.W_BG, bg=self.C_LIGHTGRAY, bd=0, command=lambda: (self.updateButton.place_forget(), self.performUpdate(), self.updateProgress.place(relx=.045, rely=.77)))
         self.updateButton.place(relx=.05, rely=.78)
@@ -293,8 +294,8 @@ class Game:
 
     def performUpdate(self):
 
-
-        self.CONFIG_PROGRAM_GIT = 'moving'
+        self.CONFIG_PROGRAM_GITHUB = 'https://github.com/Shivam-M/Game-S'
+        t = self.CONFIG_PROGRAM_GITHUB.split('/')
 
         import shutil, urllib.request, zipfile
         cwd = str(os.getcwd())
@@ -312,7 +313,6 @@ class Game:
                 break
         folder.remove('/')
         folder = "".join(folder)
-
         os.chdir('../')
         shutil.make_archive(folder + '-BACKUP', 'zip', folder)
         urllib.request.urlretrieve(self.CONFIG_PROGRAM_GITHUB + '/archive/master.zip', folder + '-NEW.zip')
@@ -324,18 +324,22 @@ class Game:
             pass
         zip.extractall()
 
-        t = 0
+        def getFolderSize(d='..'):
+            total_size = 0
+            for dirpath, dirnames, filenames in os.walk(d):
+                for f in filenames:
+                    fp = os.path.join(dirpath, f)
+                    total_size += os.path.getsize(fp)
+            return total_size
 
-        for file in os.listdir(os.getcwd() + '/' + folder + '-master'):
-            print(os.stat(file).st_size)
-            t += os.stat(file).st_size
-            os.rename(os.getcwd() + '/' + folder + '-master/' + file, os.getcwd() + '/' + folder + '/' + file)
+        self.latestSizeV.config(text=(str((getFolderSize(os.getcwd() + '/' + t[4] + '-master')) / 1000) + ' KB'))
 
-        print('t', t)
+        for file in os.listdir(os.getcwd() + '/' + t[4] + '-master'):
+            os.rename(os.getcwd() + '/' + t[4] + '-master/' + file, os.getcwd() + '/' + folder + '/' + file)
 
         zip.close()
         try:
-            shutil.rmtree(folder + '-master', ignore_errors=True)
+            shutil.rmtree(t[4] + '-master', ignore_errors=True)
             shutil.rmtree(folder + '-NEW.zip', ignore_errors=True)
         except PermissionError:
             pass
