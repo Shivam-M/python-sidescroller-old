@@ -15,6 +15,14 @@ from classes.game.Slider import Slider
 from classes.game.Enemy import Enemy
 from classes.game.Bullet import Bullet
 
+# TODO: Move update functions into a separate class
+# TODO: Add all settings assets into an array
+# TODO: Saving & exiting buttons on settings screen
+# TODO: General optimizations (performance, network)
+# TODO: Add client-server connection option as opposed to the current peer-to-peer
+# TODO: Player customization (colours, name-tags)
+# TODO: Complete Coin class
+
 
 class Game:
     def __init__(self):
@@ -29,13 +37,11 @@ class Game:
         self.W_FONT3 = ('MS PGothic', 10, 'bold')
         self.W_FONT4 = ('MS PGothic', 11, 'bold')
 
-        self.G_GAMEMODE = 0
-        self.G_VERSION = 0.53
-
+        self.GameMode = 0
+        self.GameVersion = 0.53
         self.GamePage = 1
         self.GameLives = 3
         self.GameCooldown = 20
-
         self.GameState = 'host'
 
         self.S_GAME = 'PLACEHOLDER'
@@ -46,7 +52,7 @@ class Game:
         self.S_EXITGAME = 'EXIT GAME'
         self.S_UPDATEGAME = 'UPDATE GAME'
 
-        self.S_VERSION = f'Version A - {self.G_VERSION}'
+        self.S_VERSION = f'Version A - {self.GameVersion}'
         self.S_HELP = 'SHOW HELP'
         self.S_UPDATE = 'AUTO-UPDATE'
         self.S_LOGGING = 'LOG EVENTS'
@@ -196,11 +202,13 @@ class Game:
             if event.keysym == 'Left':
                 keyPressedL = False
                 if not keyPressedR:
-                    self.myPlayer().setVelocityX(0)
+                    if self.myPlayer().isJumping():
+                        self.myPlayer().setVelocityX(0)
             elif event.keysym == 'Right':
                 keyPressedR = False
                 if not keyPressedL:
-                    self.myPlayer().setVelocityX(0)
+                    if not self.myPlayer().isJumping():
+                        self.myPlayer().setVelocityX(0)
 
         def evStopL(event):
             global keyPressedL, keyPressedR
@@ -227,13 +235,13 @@ class Game:
         self.GameWindow.after(1, lambda: self.GameLivesRemaining.place(relx=.41, rely=.15))
         self.GameWindow.after(3000, lambda: self.GameLivesRemaining.place_forget())
 
-        self.P = Player(self.GameWindow, 'white')
-        self.P.draw(.05, .5)
+        self.Player1 = Player(self.GameWindow, 'white')
+        self.Player1.draw(.05, .5)
 
         if self.GameState == 'host':
-            arguments = (self.P, )
+            arguments = (self.Player1, )
         else:
-            arguments = (self.T, )
+            arguments = (self.Player2, )
 
         gThread = Thread(target=self.moveDown, args=arguments)
         uThread = Thread(target=self.updateLocation, args=arguments)
@@ -256,7 +264,6 @@ class Game:
                     total_size += os.path.getsize(fp)
             return total_size
 
-
         self.clearScreen()
         self.updateTitle = Label(self.GameWindow, text='UPDATE GAME', font=self.W_FONT, bg=self.W_BG, fg=self.W_FG)
         self.updateTitle.place(relx=.05, rely=.1)
@@ -269,7 +276,7 @@ class Game:
         self.latestSize = Label(self.GameWindow, text='Latest Size:', font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
         self.latestSize.place(relx=.54, rely=.45)
 
-        self.currentVersionV = Label(self.GameWindow, text=('Version ' + str(self.G_VERSION)), font=self.W_FONT2, bg=self.W_BG, fg=self.W_FG)
+        self.currentVersionV = Label(self.GameWindow, text=('Version ' + str(self.GameVersion)), font=self.W_FONT2, bg=self.W_BG, fg=self.W_FG)
         self.currentVersionV.place(relx=.28, rely=.35)
         self.currentSizeV = Label(self.GameWindow, text=f'{getFolderSize() / 1000} KB', font=self.W_FONT2, bg=self.W_BG, fg=self.W_FG)
         self.currentSizeV.place(relx=.82, rely=.35)
@@ -373,7 +380,7 @@ class Game:
             sleep(5)
 
     def getPlayer(self):
-        return self.P
+        return self.Player1
 
     def clearFloors(self):
         try:
@@ -384,9 +391,9 @@ class Game:
 
     def myPlayer(self):
         if self.GameState == 'host':
-            return self.P
+            return self.Player1
         elif self.GameState == 'join':
-            return self.T
+            return self.Player2
 
     def drawPage(self, n):
         self.currentPage.set('GAME PAGE: ' + str(n))
@@ -604,10 +611,10 @@ class Game:
 
     def updateLocation(self, p):
         while True:
-            if self.G_GAMEMODE == 1:
+            if self.GameMode == 1:
                 self.Session.send(';' + str(self.GamePage) + ';' + str(round(p.getLocation()[0], 2)) + ';' + str(round(p.getLocation()[1], 2)))
-                self.T.refresh()
-                self.P.refresh()
+                self.Player2.refresh()
+                self.Player1.refresh()
             else:
                 p.refresh()
             sleep(0.001)
@@ -616,9 +623,9 @@ class Game:
         self.setGamemode(t)
         if t == 0:
             self.drawStart()
-            Test2 = Enemy(self.GameWindow, self.P, c=self.C_RED, g=self)
+            Test2 = Enemy(self.GameWindow, self.Player1, c=self.C_RED, g=self)
             Test2.draw(.45, 0.755)
-            # Test3 = Enemy(self.GameWindow, self.P, c=self.C_RED, g=self)
+            # Test3 = Enemy(self.GameWindow, self.Player1, c=self.C_RED, g=self)
             # Test3.draw(.7, 0.755)
         else:
             self.clearScreen()
@@ -629,17 +636,17 @@ class Game:
 
     def host(self):
         self.GameState = 'host'
-        self.T = Player(self.GameWindow, self.C_BLUE)
-        self.T.draw(.1, .5)
-        self.Session = Host(self.T, self)
+        self.Player2 = Player(self.GameWindow, self.C_BLUE)
+        self.Player2.draw(.1, .5)
+        self.Session = Host(self.Player2, self)
         self.drawStart()
         self.Session.run()
 
     def join(self):
         self.GameState = 'join'
-        self.T = Player(self.GameWindow, self.C_BLUE)
-        self.T.draw(.1, .5)
-        self.Session = Join(self.T, self)
+        self.Player2 = Player(self.GameWindow, self.C_BLUE)
+        self.Player2.draw(.1, .5)
+        self.Session = Join(self.Player2, self)
         self.drawStart()
         self.Session.connect()
         self.Session.startlisten()
@@ -706,7 +713,7 @@ class Game:
 
     def setGamemode(self, g):
         self.restartGame()
-        self.G_GAMEMODE = g
+        self.GameMode = g
 
     def showLocation(self, p):
         while True:
