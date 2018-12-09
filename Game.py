@@ -440,8 +440,6 @@ class Game:
             self.drawStart()
             Test2 = Enemy(self.GameWindow, self.Player1, c=self.C_RED, g=self)
             Test2.draw(.45, 0.755)
-            # Test3 = Enemy(self.GameWindow, self.Player1, c=self.C_RED, g=self)
-            # Test3.draw(.7, 0.755)
         else:
             self.clearScreen()
             b = Button(self.GameWindow, text='HOST', command=lambda: (b.place_forget(), b2.place_forget(), self.host()))

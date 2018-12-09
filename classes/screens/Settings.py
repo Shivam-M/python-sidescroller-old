@@ -28,6 +28,10 @@ class Settings:
         self.S_PAGE = 'SHOW PAGE'
         self.S_ENEMY = 'SPAWN ENEMIES'
         self.S_PEER = 'PEER-TO-PEER'
+        self.S_ADVANCED = 'MORE SETTINGS'
+        self.S_RESET = 'RESET TO DEFAULT'
+        self.S_LEAVE = 'RETURN TO MENU'
+        self.S_SAVE = 'SAVE SETTINGS'
 
         self.C_RED = '#E74C3C'
         self.C_GREEN = '#2ECC71'
@@ -48,6 +52,11 @@ class Settings:
         self.SettingsEnemy = Label(self.Window, text=self.S_ENEMY, font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
         self.SettingsPeer = Label(self.Window, text=self.S_PEER, font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
 
+        self.SettingsAdvanced = Button(self.Window, text=self.S_ADVANCED, font=self.W_FONT2, fg=self.W_BG, bg=self.W_FG, bd=0, width=18, command=lambda: self.moreSettings())
+        self.SettingsReset = Button(self.Window, text=self.S_RESET, font=self.W_FONT2, fg=self.W_BG, bg=self.C_ORANGE, bd=0, width=18, command=lambda: self.resetSettings())
+        self.SettingsLeave = Button(self.Window, text=self.S_LEAVE, font=self.W_FONT2, fg=self.W_BG, bg=self.C_RED, bd=0, width=18, command=lambda: self.leaveSettings())
+        self.SettingsSave = Button(self.Window, text=self.S_SAVE, font=self.W_FONT2, fg=self.W_BG, bg=self.C_GREEN, bd=0, width=18, command=lambda: self.saveSettings())
+
         self.SettingsPositionSwitch = Switch(self.Window)
         self.SettingsPageSwitch = Switch(self.Window)
         self.SettingsEnemySwitch = Switch(self.Window)
@@ -65,7 +74,7 @@ class Settings:
         self.GameInstance.GameTitle.config(text='SETTINGS')
         self.GameInstance.GameTitle.place(relx=.05, rely=.1)
 
-        self.SettingsVersion.place(relx=.8, rely=.85)
+        self.SettingsVersion.place(relx=.795, rely=.85)
 
         self.SettingsHelp.place(relx=.051, rely=.35)
         self.SettingsHelpSwitch.place(0.275, 0.35)
@@ -91,6 +100,11 @@ class Settings:
         self.SettingsPeer.place(relx=.38, rely=.65)
         self.SettingsPeerSwitch.place(0.604, 0.65)
 
+        self.SettingsAdvanced.place(relx=.72, rely=.35)
+        self.SettingsSave.place(relx=.72, rely=.45)
+        self.SettingsReset.place(relx=.72, rely=.55)
+        self.SettingsLeave.place(relx=.72, rely=.65)
+
         self.loadConfiguration()
 
         Animate(self.Window, .05, .1).scroll()
@@ -103,6 +117,18 @@ class Settings:
         for value in configEntries:
             configValues[configEntries.index(value)] = int(self.GameInstance.Configuration['Settings'][value])
             configSwitches[configEntries.index(value)].set(int(self.GameInstance.Configuration['Settings'][value]))
+
+    def moreSettings(self):
+        pass
+
+    def resetSettings(self):
+        pass
+
+    def leaveSettings(self):
+        self.GameInstance.clearScreen()
+
+    def saveSettings(self):
+        pass
 
     def get(self):
         return self.SettingsAssets
