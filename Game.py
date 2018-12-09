@@ -4,16 +4,17 @@ from threading import Thread, active_count
 from time import sleep
 from tkinter import *
 
+from classes.screens.Customize import Customize
+from classes.screens.Settings import Settings
+from classes.screens.Update import Update
+
 from classes.tools.Error import Error
 from classes.tools.Logger import Logger
-from classes.tools.Animator import Animate
 
 from classes.game.Player import Player
-from classes.game.Switch import Switch
 from classes.game.Network import Host, Join
 from classes.game.Slider import Slider
 from classes.game.Enemy import Enemy
-from classes.game.Bullet import Bullet
 
 # TODO: Move update functions into a separate class
 # TODO: Add all settings assets into an array
@@ -140,27 +141,6 @@ class Game:
 
         self.GameLivesRemaining = Label(self.GameWindow, text=self.S_LIVES, font=self.W_FONT4, bg=self.W_BG, fg=self.C_RED)
 
-        self.SettingsVersion = Label(self.GameWindow, text=self.S_VERSION, font=self.W_FONT2, bg=self.W_BG, fg=self.C_GRAY)
-        self.SettingsHelp = Label(self.GameWindow, text=self.S_HELP, font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
-        self.SettingsUpdate = Label(self.GameWindow, text=self.S_UPDATE, font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
-        self.SettingsLog = Label(self.GameWindow, text=self.S_LOGGING, font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
-        self.SettingsCheat = Label(self.GameWindow, text=self.S_CHEAT, font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
-
-        self.SettingsPosition = Label(self.GameWindow, text=self.S_POSITION, font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
-        self.SettingsPage = Label(self.GameWindow, text=self.S_PAGE, font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
-        self.SettingsEnemy = Label(self.GameWindow, text=self.S_ENEMY, font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
-        self.SettingsPeer = Label(self.GameWindow, text=self.S_PEER, font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
-
-        self.SettingsPositionSwitch = Switch(self.GameWindow)
-        self.SettingsPageSwitch = Switch(self.GameWindow)
-        self.SettingsEnemySwitch = Switch(self.GameWindow)
-        self.SettingsPeerSwitch = Switch(self.GameWindow)
-
-        self.SettingsHelpSwitch = Switch(self.GameWindow)
-        self.SettingsUpdateSwitch = Switch(self.GameWindow)
-        self.SettingsLogSwitch = Switch(self.GameWindow)
-        self.SettingsCheatSwitch = Switch(self.GameWindow)
-
         self.currentLocation = StringVar()
         self.PlayerPosition = Label(self.GameWindow, textvariable=self.currentLocation, font=self.W_FONT3, bg=self.W_BG, fg=self.C_GRAY)
 
@@ -168,9 +148,7 @@ class Game:
         self.PlayerPage = Label(self.GameWindow, textvariable=self.currentPage, font=self.W_FONT3, bg=self.W_BG, fg=self.C_GREEN)
 
         self.GameAssets = [self.GameTitle, self.GameSingleplayer, self.GameMultiplayer, self.GameCustomize, self.GameSettings, self.GameExitGame, self.GameUpdate]
-        self.SettingsAssets = [self.SettingsVersion]
 
-        self.THREAD_CONFIG = Thread(target=self.loadConfiguration, args=())
         self.THREAD_PRINT = Thread(target=self.printThreads, args=()).start()
         self.THREAD_WINDOW = Thread(target=self.GameWindow.mainloop())
 
@@ -256,110 +234,7 @@ class Game:
 
     def updateGame(self):
 
-        def getFolderSize(d=os.getcwd()):
-            total_size = 0
-            for dirpath, dirnames, filenames in os.walk(d):
-                for f in filenames:
-                    fp = os.path.join(dirpath, f)
-                    total_size += os.path.getsize(fp)
-            return total_size
-
-        self.clearScreen()
-        self.updateTitle = Label(self.GameWindow, text='UPDATE GAME', font=self.W_FONT, bg=self.W_BG, fg=self.W_FG)
-        self.updateTitle.place(relx=.05, rely=.1)
-        self.currentVersion = Label(self.GameWindow, text='Current Version:', font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
-        self.currentVersion.place(relx=.05, rely=.35)
-        self.currentSize = Label(self.GameWindow, text='Current Size:', font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
-        self.currentSize.place(relx=.54, rely=.35)
-        self.latestVersion = Label(self.GameWindow, text='Latest Version:', font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
-        self.latestVersion.place(relx=.05, rely=.45)
-        self.latestSize = Label(self.GameWindow, text='Latest Size:', font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
-        self.latestSize.place(relx=.54, rely=.45)
-
-        self.currentVersionV = Label(self.GameWindow, text=('Version ' + str(self.GameVersion)), font=self.W_FONT2, bg=self.W_BG, fg=self.W_FG)
-        self.currentVersionV.place(relx=.28, rely=.35)
-        self.currentSizeV = Label(self.GameWindow, text=f'{getFolderSize() / 1000} KB', font=self.W_FONT2, bg=self.W_BG, fg=self.W_FG)
-        self.currentSizeV.place(relx=.82, rely=.35)
-        self.latestVersionV = Label(self.GameWindow, text='Version 1.01', font=self.W_FONT2, bg=self.W_BG, fg=self.W_FG)
-        self.latestVersionV.place(relx=.28, rely=.45)
-        self.latestSizeV = Label(self.GameWindow, text='-- KB', font=self.W_FONT2, bg=self.W_BG, fg=self.W_FG)
-        self.latestSizeV.place(relx=.82, rely=.45)
-
-        self.updateInformation = Label(self.GameWindow, text='Information: Current files and program data will be stored in a backup folder in the above directory.', font=('MS PGothic', 10, 'bold'), bg=self.W_BG, fg=self.C_BLUE)
-        self.updateInformation.place(relx=.05, rely=.55)
-
-        self.unfilledBar = Label(self.GameWindow, text=' ', font=('MS PGothic', 4, 'bold'), bg=self.C_GRAY, fg=self.C_GRAY, width=180)
-        self.unfilledBar.place(relx=.05, rely=.88)
-
-        self.filledBar = Label(self.GameWindow, text=' ', font=('MS PGothic', 4, 'bold'), bg=self.W_FG, fg=self.W_FG, width=40)
-        self.filledBar.place(relx=.05, rely=.88)
-
-        self.percentageValue = Label(self.GameWindow, text='0%', font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY, anchor='e')
-        self.percentageValue.place(relx=.91, rely=.8)
-
-        self.updateProgress = Label(self.GameWindow, text='UPDATING GAME...', font=('MS PGothic', 18, 'bold'), bg=self.W_BG, fg=self.C_LIGHTGRAY, anchor='e')
-        self.updateProgress.place(relx=.049, rely=.77)
-
-        self.updateButton = Button(self.GameWindow, text='UPDATE GAME', font=self.W_FONT2, fg=self.W_BG, bg=self.C_LIGHTGRAY, bd=0, command=lambda: (self.updateButton.place_forget(), self.performUpdate(), self.updateProgress.place(relx=.045, rely=.77)))
-        self.updateButton.place(relx=.05, rely=.78)
-
-        Animate(self.GameWindow, .05, .1).scroll()
-
-    def performUpdate(self):
-
-        self.CONFIG_PROGRAM_GITHUB = 'https://github.com/Shivam-M/Game-S'
-        t = self.CONFIG_PROGRAM_GITHUB.split('/')
-
-        import shutil, urllib.request, zipfile
-        cwd = str(os.getcwd())
-        cwd = cwd.replace(os.sep, '/')
-        counter = 0
-        folder = []
-        x = len(cwd) - 1
-        while True:
-            if cwd[x] != '/':
-                counter += 1
-                x = len(cwd) - counter
-                folder.insert(0, cwd[x])
-                continue
-            else:
-                break
-        folder.remove('/')
-        folder = "".join(folder)
-        os.chdir('../')
-        shutil.make_archive(folder + '-BACKUP', 'zip', folder)
-        urllib.request.urlretrieve(self.CONFIG_PROGRAM_GITHUB + '/archive/master.zip', folder + '-NEW.zip')
-        zip = zipfile.ZipFile(folder + '-NEW.zip')
-
-        try:
-            shutil.rmtree(folder, ignore_errors=True)
-        except PermissionError:
-            pass
-        zip.extractall()
-
-        def getFolderSize(d='..'):
-            total_size = 0
-            for dirpath, dirnames, filenames in os.walk(d):
-                for f in filenames:
-                    fp = os.path.join(dirpath, f)
-                    total_size += os.path.getsize(fp)
-            return total_size
-
-        self.latestSizeV.config(text=(str((getFolderSize(os.getcwd() + '/' + t[4] + '-master')) / 1000) + ' KB'))
-
-        for file in os.listdir(os.getcwd() + '/' + t[4] + '-master'):
-            os.rename(os.getcwd() + '/' + t[4] + '-master/' + file, os.getcwd() + '/' + folder + '/' + file)
-
-        zip.close()
-        try:
-            shutil.rmtree(t[4] + '-master', ignore_errors=True)
-            shutil.rmtree(folder + '-NEW.zip', ignore_errors=True)
-        except PermissionError:
-            pass
-        try:
-            os.remove(folder + '-NEW.zip')
-        except:
-            pass
+        Update(self.GameWindow, self).draw()
 
     def printThreads(self):
         while True:
@@ -443,66 +318,6 @@ class Game:
                           self.whiteFloor4, self.whiteFloor5, self.whiteFloor6,
                           self.whiteFloor7, self.whiteFloor8, self.whiteFloor9,
                           self.whiteFloor10, self.whiteFloor11, self.Slider, self.Slider2]
-
-    def loadConfiguration(self):
-        configEntries = ['Show-Help', 'Auto-Update', 'Log-Events', 'Allow-Cheats', 'Show-Position', 'Show-Pages', 'Spawn-Enemies', 'Peer-to-Peer']
-        configValues = [0, 0, 0, 0, 0, 0, 0, 0]
-        configSwitches = [self.SettingsHelpSwitch, self.SettingsUpdateSwitch, self.SettingsLogSwitch, self.SettingsCheatSwitch, self.SettingsPositionSwitch, self.SettingsPageSwitch, self.SettingsEnemySwitch, self.SettingsPeerSwitch]
-
-        for value in configEntries:
-            configValues[configEntries.index(value)] = int(self.Configuration['Settings'][value])
-            configSwitches[configEntries.index(value)].set(int(self.Configuration['Settings'][value]))
-
-        self.updateCurrentConfiguration(configEntries, configValues)
-
-    def updateCurrentConfiguration(self, e, v):
-        config = []
-        self.CFG_HELP = 0
-        self.CFG_UPDATE = 0
-        self.CFG_LOGGING = 0
-        self.CFG_CHEATS = 0
-        self.CFG_POSITION = 0
-        self.CFG_PAGES = 0
-
-        '''
-        
-        for entry in e:
-            config.append([entry, v[e.index(entry)]])
-        for configuration in config:
-            if configuration[0] == 'Show-Help':
-                if configuration[1] == 1:
-                    self.CFG_HELP = 1
-                else:
-                    self.CFG_HELP = 0
-            elif configuration[0] == 'Auto-Update':
-                if configuration[1] == 1:
-                    self.CFG_UPDATE = 1
-                    self.Log('Auto-update is turned on - searching for updates.', 'CONFIG')
-                else:
-                    self.CFG_UPDATE = 0
-                    self.Log('Auto-update is turned off.', 'CONFIG')
-            elif configuration[0] == 'Log-Events':
-                if configuration[1] == 1:
-                    self.CFG_LOGGING = 1
-                else:
-                    self.CFG_LOGGING = 0
-            elif configuration[0] == 'Allow-Cheats':
-                if configuration[1] == 1:
-                    self.CFG_CHEATS = 1
-                else:
-                    self.CFG_CHEATS = 0
-            elif configuration[0] == 'Show-Position':
-                if configuration[1] == 1:
-                    self.CFG_POSITION = 1
-                else:
-                    self.CFG_POSITION = 0
-            elif configuration[0] == 'Show-Pages':
-                if configuration[1] == 1:
-                    self.CFG_PAGES = 1
-                else:
-                    self.CFG_PAGES = 0
-        
-        '''
 
     def Log(self, m, p='INFO'):
         if self.Configuration['Settings']['Log-Events'] == '1':
@@ -671,45 +486,10 @@ class Game:
             GameAsset.place_forget()
 
     def changeSettings(self):
-        for GameAsset in self.GameAssets:
-            GameAsset.place_forget()
-        self.THREAD_CONFIG.start()
-        self.GameTitle.config(text='SETTINGS')
-        self.GameTitle.place(relx=.05, rely=.1)
-        self.SettingsVersion.place(relx=.8, rely=.85)
-
-        self.SettingsHelp.place(relx=.051, rely=.35)
-        self.SettingsHelpSwitch.place(0.275, 0.35)
-
-        self.SettingsUpdate.place(relx=.051, rely=.45)
-        self.SettingsUpdateSwitch.place(0.275, 0.45)
-
-        self.SettingsLog.place(relx=.051, rely=.55)
-        self.SettingsLogSwitch.place(0.275, 0.55)
-
-        self.SettingsCheat.place(relx=.051, rely=.65)
-        self.SettingsCheatSwitch.place(0.275, 0.65)
-
-        self.SettingsPosition.place(relx=.38, rely=.35)
-        self.SettingsPositionSwitch.place(0.604, 0.35)
-
-        self.SettingsPage.place(relx=.38, rely=.45)
-        self.SettingsPageSwitch.place(0.604, 0.45)
-
-        self.SettingsEnemy.place(relx=.38, rely=.55)
-        self.SettingsEnemySwitch.place(0.604, 0.55)
-
-        self.SettingsPeer.place(relx=.38, rely=.65)
-        self.SettingsPeerSwitch.place(0.604, 0.65)
-
-        Animate(self.GameWindow, .05, .1).scroll()
+        Settings(self.GameWindow, self).draw()
 
     def customizeScreen(self):
-        for GameAsset in self.GameAssets:
-            GameAsset.place_forget()
-        self.GameTitle.config(text='CUSTOMIZE')
-        self.GameTitle.place(relx=.05, rely=.1)
-        Animate(self.GameWindow, .05, .1).scroll()
+        Customize(self.GameWindow, self).draw()
 
     def setGamemode(self, g):
         self.restartGame()

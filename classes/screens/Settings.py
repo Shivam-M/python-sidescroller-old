@@ -1,5 +1,6 @@
 from tkinter import *
 from classes.game.Switch import Switch
+from classes.tools.Animator import Animate
 
 
 class Settings:
@@ -11,16 +12,13 @@ class Settings:
 
         self.W_BG = '#2F3542'
         self.W_FG = '#FFFFFF'
-        self.W_SIZE = '600x300'
-        self.W_SIZE = '800x300'
-        self.W_TITLE = 'PLACEHOLDER'
 
         self.W_FONT = ('MS PGothic', 30, 'bold')
         self.W_FONT2 = ('MS PGothic', 12, 'bold')
         self.W_FONT3 = ('MS PGothic', 10, 'bold')
         self.W_FONT4 = ('MS PGothic', 11, 'bold')
 
-        self.S_VERSION = f'Version A - {g.GameVersion}'
+        self.S_VERSION = f'Version A - {self.GameInstance.GameVersion}'
         self.S_HELP = 'SHOW HELP'
         self.S_UPDATE = 'AUTO-UPDATE'
         self.S_LOGGING = 'LOG EVENTS'
@@ -38,8 +36,6 @@ class Settings:
         self.C_YELLOW = '#F1C40F'
         self.C_GRAY = '#95A5A6'
         self.C_LIGHTGRAY = '#BDC3C7'
-
-        print(g.GameVersion)
 
         self.SettingsVersion = Label(self.Window, text=self.S_VERSION, font=self.W_FONT2, bg=self.W_BG, fg=self.C_GRAY)
         self.SettingsHelp = Label(self.Window, text=self.S_HELP, font=self.W_FONT2, bg=self.W_BG, fg=self.C_LIGHTGRAY)
@@ -61,8 +57,14 @@ class Settings:
         self.SettingsUpdateSwitch = Switch(self.Window)
         self.SettingsLogSwitch = Switch(self.Window)
         self.SettingsCheatSwitch = Switch(self.Window)
-    
+
     def draw(self):
+
+        self.GameInstance.clearScreen()
+
+        self.GameInstance.GameTitle.config(text='SETTINGS')
+        self.GameInstance.GameTitle.place(relx=.05, rely=.1)
+
         self.SettingsVersion.place(relx=.8, rely=.85)
 
         self.SettingsHelp.place(relx=.051, rely=.35)
@@ -88,6 +90,19 @@ class Settings:
 
         self.SettingsPeer.place(relx=.38, rely=.65)
         self.SettingsPeerSwitch.place(0.604, 0.65)
-    
+
+        self.loadConfiguration()
+
+        Animate(self.Window, .05, .1).scroll()
+
+    def loadConfiguration(self):
+        configEntries = ['Show-Help', 'Auto-Update', 'Log-Events', 'Allow-Cheats', 'Show-Position', 'Show-Pages', 'Spawn-Enemies', 'Peer-to-Peer']
+        configValues = [0, 0, 0, 0, 0, 0, 0, 0]
+        configSwitches = [self.SettingsHelpSwitch, self.SettingsUpdateSwitch, self.SettingsLogSwitch, self.SettingsCheatSwitch, self.SettingsPositionSwitch, self.SettingsPageSwitch, self.SettingsEnemySwitch, self.SettingsPeerSwitch]
+
+        for value in configEntries:
+            configValues[configEntries.index(value)] = int(self.GameInstance.Configuration['Settings'][value])
+            configSwitches[configEntries.index(value)].set(int(self.GameInstance.Configuration['Settings'][value]))
+
     def get(self):
         return self.SettingsAssets
