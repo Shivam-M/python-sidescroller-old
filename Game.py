@@ -1,5 +1,4 @@
 import configparser
-import os
 from threading import Thread, active_count
 from time import sleep
 from tkinter import *
@@ -7,13 +6,13 @@ from tkinter import *
 from classes.screens.Customize import Customize
 from classes.screens.Settings import Settings
 from classes.screens.Update import Update
+from classes.screens.Levels import Levels
 
 from classes.tools.Error import Error
 from classes.tools.Logger import Logger
 
 from classes.game.Player import Player
 from classes.game.Network import Host, Join
-from classes.game.Slider import Slider
 from classes.game.Enemy import Enemy
 
 # TODO: Move update functions into a separate class
@@ -23,6 +22,7 @@ from classes.game.Enemy import Enemy
 # TODO: Add client-server connection option as opposed to the current peer-to-peer
 # TODO: Player customization (colours, name-tags)
 # TODO: Complete Coin class
+# TODO: Add page property to entities
 
 
 class Game:
@@ -82,32 +82,6 @@ class Game:
         self.Configuration = configparser.ConfigParser()
         self.Configuration.read('config/game/game-config.ini')
 
-        self.whiteFloor = None
-        self.whiteFloor2 = None
-        self.whiteFloor3 = None
-        self.whiteFloor4 = None
-        self.whiteFloor5 = None
-        self.whiteFloor6 = None
-        self.whiteFloor7 = None
-        self.whiteFloor8 = None
-        self.whiteFloor9 = None
-        self.whiteFloor10 = None
-        self.whiteFloor11 = None
-        self.whiteFloor12 = None
-        self.whiteFloor13 = None
-        self.whiteFloor14 = None
-        self.whiteFloor15 = None
-        self.whiteFloor16 = None
-        self.whiteFloor17 = None
-
-        self.Slider = None
-        self.Slider2 = None
-
-        self.allFloors = [self.whiteFloor, self.whiteFloor2, self.whiteFloor3,
-                          self.whiteFloor4, self.whiteFloor5, self.whiteFloor6,
-                          self.whiteFloor7, self.whiteFloor8, self.whiteFloor9,
-                          self.whiteFloor10, self.whiteFloor11, self.Slider, self.Slider2]
-
         self.threadBypass = False
 
         self.GameWindow = Tk()
@@ -148,6 +122,7 @@ class Game:
         self.PlayerPage = Label(self.GameWindow, textvariable=self.currentPage, font=self.W_FONT3, bg=self.W_BG, fg=self.C_GREEN)
 
         self.GameAssets = [self.GameTitle, self.GameSingleplayer, self.GameMultiplayer, self.GameCustomize, self.GameSettings, self.GameExitGame, self.GameUpdate]
+        self.allFloors = None
 
         self.THREAD_PRINT = Thread(target=self.printThreads, args=()).start()
         self.THREAD_WINDOW = Thread(target=self.GameWindow.mainloop())
@@ -261,7 +236,7 @@ class Game:
         try:
             for floor in self.allFloors:
                 floor.place_forget()
-        except Exception as e:
+        except:
             pass
 
     def myPlayer(self):
@@ -273,51 +248,9 @@ class Game:
     def drawPage(self, n):
         self.currentPage.set('GAME PAGE: ' + str(n))
         self.clearFloors()
-        n = 4
-        if n == 1:
-            self.whiteFloor = Label(self.GameWindow, bg=self.W_FG, height=3, width=200)
-            self.whiteFloor.place(relx=.0, rely=.85)
-        elif n == 2:
-            self.whiteFloor2 = Label(self.GameWindow, bg=self.W_FG, height=3, width=43)
-            self.whiteFloor2.place(relx=.0, rely=.85)
-
-            self.whiteFloor3 = Label(self.GameWindow, bg=self.W_FG, height=3, width=100)
-            self.whiteFloor3.place(relx=.70, rely=.85)
-        elif n == 3:
-            self.whiteFloor4 = Label(self.GameWindow, bg=self.W_FG, height=3, width=20)
-            self.whiteFloor4.place(relx=.0, rely=.85)
-
-            self.whiteFloor5 = Label(self.GameWindow, bg=self.W_FG, height=3, width=100)
-            self.whiteFloor5.place(relx=.925, rely=.85)
-
-            self.whiteFloor6 = Label(self.GameWindow, bg=self.W_FG, height=1, width=10)
-            self.whiteFloor6.place(relx=.2, rely=.7)
-
-            self.whiteFloor7 = Label(self.GameWindow, bg=self.W_FG, height=1, width=8)
-            self.whiteFloor7.place(relx=.4, rely=.6)
-
-            self.whiteFloor8 = Label(self.GameWindow, bg=self.W_FG, height=1, width=14)
-            self.whiteFloor8.place(relx=.68, rely=.65)
-        elif n == 4:
-            self.whiteFloor9 = Label(self.GameWindow, bg=self.W_FG, height=3, width=10)
-            self.whiteFloor9.place(relx=.0, rely=.85)
-
-            self.whiteFloor10 = Label(self.GameWindow, bg=self.W_FG, height=3, width=100)
-            self.whiteFloor10.place(relx=.925, rely=.85)
-
-            self.whiteFloor11 = Label(self.GameWindow, bg=self.W_FG, height=3, width=5)
-            self.whiteFloor11.place(relx=.47, rely=.85)
-
-            self.Slider = Slider(self.GameWindow, c='white', g=self)
-            self.Slider.draw(0.875, .85)
-
-            self.Slider2 = Slider(self.GameWindow, c='white', g=self)
-            self.Slider2.draw(0.415, .85)
-
-        self.allFloors = [self.whiteFloor, self.whiteFloor2, self.whiteFloor3,
-                          self.whiteFloor4, self.whiteFloor5, self.whiteFloor6,
-                          self.whiteFloor7, self.whiteFloor8, self.whiteFloor9,
-                          self.whiteFloor10, self.whiteFloor11, self.Slider, self.Slider2]
+        currentLevel = Levels(self.GameWindow, self)
+        currentLevel.draw(n)
+        self.allFloors = currentLevel.get()
 
     def Log(self, m, p='INFO'):
         if self.Configuration['Settings']['Log-Events'] == '1':
