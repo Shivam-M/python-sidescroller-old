@@ -72,17 +72,11 @@ class Game:
         self.C_GRAY = '#95A5A6'
         self.C_LIGHTGRAY = '#BDC3C7'
 
-        self.CFG_HELP = 0
-        self.CFG_UPDATE = 0
-        self.CFG_LOGGING = 0
-        self.CFG_CHEATS = 0
-        self.CFG_POSITION = 0
-        self.CFG_PAGES = 0
-
         self.Configuration = configparser.ConfigParser()
         self.Configuration.read('config/game/game-config.ini')
 
         self.threadBypass = False
+        self.Session = None
 
         self.GameWindow = Tk()
         self.GameWindow.geometry(self.W_SIZE)
@@ -91,14 +85,6 @@ class Game:
 
         self.GameTitle = Label(self.GameWindow, text=self.S_GAME, font=self.W_FONT, bg=self.W_BG, fg=self.W_FG)
         self.GameTitle.place(relx=.05, rely=.1)
-
-        # gamePhoto = PhotoImage(file="../assets/images/download.png", master=self.GameWindow)
-        # gamePhoto = gamePhoto.subsample(3)
-        # gamePhoto2 = PhotoImage(file="../assets/images/download1.png", master=self.GameWindow)
-        # gamePhoto2 = gamePhoto2.subsample(3)
-        # self.otherImg = Button(self.GameWindow, image=gamePhoto2, bd=0, command=lambda: (self.otherImg.place_forget(), self.CoinItem.place(relx=.75, rely=.3)))
-        # self.CoinItem = Button(self.GameWindow, image=gamePhoto, bd=0, command=lambda: (self.CoinItem.place_forget(), self.otherImg.place(relx=.75, rely=.3)))
-        # self.CoinItem.place(relx=.75, rely=.3)
 
         self.GameSingleplayer = Button(self.GameWindow, text=self.S_SINGLEPLAYER, font=self.W_FONT2, bg=self.W_BG, fg=self.W_FG, bd=0, command=lambda: self.startGame(0))
         self.GameSingleplayer.place(relx=.05, rely=.3)
@@ -123,6 +109,9 @@ class Game:
 
         self.GameAssets = [self.GameTitle, self.GameSingleplayer, self.GameMultiplayer, self.GameCustomize, self.GameSettings, self.GameExitGame, self.GameUpdate]
         self.allFloors = None
+
+        self.Player1 = Player(self.GameWindow, 'white')
+        self.Player2 = Player(self.GameWindow, self.C_BLUE)
 
         self.THREAD_PRINT = Thread(target=self.printThreads, args=()).start()
         self.THREAD_WINDOW = Thread(target=self.GameWindow.mainloop())
@@ -150,26 +139,13 @@ class Game:
                     else:
                         self.myPlayer().jump(2)
 
-        def handleKeyRelease(event):
-            global keyPressedL, keyPressedR
-            if event.keysym == 'Left':
-                keyPressedL = False
-                if not keyPressedR:
-                    if self.myPlayer().isJumping():
-                        self.myPlayer().setVelocityX(0)
-            elif event.keysym == 'Right':
-                keyPressedR = False
-                if not keyPressedL:
-                    if not self.myPlayer().isJumping():
-                        self.myPlayer().setVelocityX(0)
-
-        def evStopL(event):
+        def handleLeftRelease(event):
             global keyPressedL, keyPressedR
             keyPressedL = False
             if not keyPressedR:
                 self.myPlayer().setVelocityX(0)
 
-        def evStopR(event):
+        def handleRightRelease(event):
             global keyPressedL, keyPressedR
             keyPressedR = False
             if not keyPressedL:
@@ -179,8 +155,8 @@ class Game:
         self.GameWindow.bind('<Up>', handleKeyPress)
         self.GameWindow.bind('<Right>', handleKeyPress)
         self.GameWindow.bind('<Left>', handleKeyPress)
-        self.GameWindow.bind('<KeyRelease-Left>', evStopL)
-        self.GameWindow.bind('<KeyRelease-Right>', evStopR)
+        self.GameWindow.bind('<KeyRelease-Left>', handleLeftRelease)
+        self.GameWindow.bind('<KeyRelease-Right>', handleRightRelease)
 
         self.PlayerPage.place(relx=.825, rely=.05)
 
@@ -188,7 +164,6 @@ class Game:
         self.GameWindow.after(1, lambda: self.GameLivesRemaining.place(relx=.41, rely=.15))
         self.GameWindow.after(3000, lambda: self.GameLivesRemaining.place_forget())
 
-        self.Player1 = Player(self.GameWindow, 'white')
         self.Player1.draw(.05, .5)
 
         if self.GameState == 'host':
@@ -382,7 +357,6 @@ class Game:
 
     def host(self):
         self.GameState = 'host'
-        self.Player2 = Player(self.GameWindow, self.C_BLUE)
         self.Player2.draw(.1, .5)
         self.Session = Host(self.Player2, self)
         self.drawStart()
@@ -390,7 +364,6 @@ class Game:
 
     def join(self):
         self.GameState = 'join'
-        self.Player2 = Player(self.GameWindow, self.C_BLUE)
         self.Player2.draw(.1, .5)
         self.Session = Join(self.Player2, self)
         self.drawStart()
