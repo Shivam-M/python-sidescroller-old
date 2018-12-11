@@ -8,12 +8,21 @@ from classes.screens.Settings import Settings
 from classes.screens.Update import Update
 from classes.screens.Levels import Levels
 
-from classes.tools.Error import Error
-from classes.tools.Logger import Logger
-
 from classes.game.Player import Player
 from classes.game.Network import Host, Join
 from classes.game.Enemy import Enemy
+
+from classes.tools.Error import Error
+from classes.tools.Logger import Logger
+
+from classes.tools.Tasker import REPEATED_TASK
+from classes.tools.Tasker import DELAYED_TASK
+
+'''
+
+UNSTABLE: 11/12/2018 | 18:14
+
+'''
 
 # TODO: Move update functions into a separate class
 # TODO: Add all settings assets into an array
@@ -113,7 +122,6 @@ class Game:
         self.Player1 = Player(self.GameWindow, 'white')
         self.Player2 = Player(self.GameWindow, self.C_BLUE)
 
-        self.THREAD_PRINT = Thread(target=self.printThreads, args=()).start()
         self.THREAD_WINDOW = Thread(target=self.GameWindow.mainloop())
 
     def drawStart(self):
@@ -171,38 +179,31 @@ class Game:
         else:
             arguments = (self.Player2, )
 
-        gThread = Thread(target=self.moveDown, args=arguments)
-        uThread = Thread(target=self.updateLocation, args=arguments)
-        cThread = Thread(target=self.changeLocation, args=arguments)
-        pThread = Thread(target=self.showLocation, args=arguments)
-        bThread = Thread(target=self.checkBoundary, args=arguments)
-
-        allThreads = [gThread, uThread, cThread, pThread, bThread]
-
-        for thread in allThreads:
-            thread.start()
+        REPEATED_TASK(self.moveDown, a=arguments, t=0.005).run()
+        REPEATED_TASK(self.updateLocation, a=arguments, t=0.001).run()
+        REPEATED_TASK(self.changeLocation, a=arguments, t=0.005).run()
+        REPEATED_TASK(self.showLocation, a=arguments, t=0.01).run()
+        REPEATED_TASK(self.printThreads).run()
+        Thread(target=self.checkBoundary, args=arguments).start()
 
     def updateGame(self):
-
         Update(self.GameWindow, self).draw()
 
     def printThreads(self):
-        while True:
-            Logger.log(f'Current number of threads: {active_count()}')
-            if active_count() > 30:
-                if not self.threadBypass:
-                    threadLimit = Error(text='Thread count exceeded 30 threads [warning level] - to carry on running the program and ignore any other warnings, click \'Ignore\', to close the program, click \'Exit\'. The program '
-                                             'will force close at 80 threads', options=['Ignore', 'Exit'])
-                    threadLimit.show()
-                    if threadLimit.outcome() == 'Ignore':
-                        self.threadBypass = True
-                    elif threadLimit.outcome() == 'Exit':
-                        self.GameWindow.destroy()
-                        exit(69)
-            if active_count() > 80:
-                Logger.log('Force shutdown - exceeded 80 threads.', 'ERROR')
-                self.GameWindow.destroy()
-            sleep(5)
+        Logger.log(f'Current number of threads: {active_count()}')
+        if active_count() > 30:
+            if not self.threadBypass:
+                threadLimit = Error(text='Thread count exceeded 30 threads [warning level] - to carry on running the program and ignore any other warnings, click \'Ignore\', to close the program, click \'Exit\'. The program '
+                                         'will force close at 80 threads', options=['Ignore', 'Exit'])
+                threadLimit.show()
+                if threadLimit.outcome() == 'Ignore':
+                    self.threadBypass = True
+                elif threadLimit.outcome() == 'Exit':
+                    self.GameWindow.destroy()
+                    exit(69)
+        if active_count() > 80:
+            Logger.log('Force shutdown - exceeded 80 threads.', 'ERROR')
+            self.GameWindow.destroy()
 
     def getPlayer(self):
         return self.Player1
@@ -232,59 +233,55 @@ class Game:
             Logger.log(m, p)
 
     def moveDown(self, p):
-        while True:
-            if p.gravity():
-                if self.GamePage == 1:
-                    playerLocation = p.getLocation()
+        if p.gravity():
+            if self.GamePage == 1:
+                playerLocation = p.getLocation()
+                if playerLocation[1] < .79:
+                    p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+            elif self.GamePage == 2:
+                playerLocation = p.getLocation()
+                if playerLocation[1] < .79:
+                    p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                elif playerLocation[1] <= 1.10 and 0.39 < playerLocation[0] < 0.68:
+                    p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                if .97 > playerLocation[0] > .70 and playerLocation[1] > 0.79:
+                    p.setLocation(playerLocation[0], 0.79)
+            elif self.GamePage == 3:
+                playerLocation = p.getLocation()
+                if 0.28 >= playerLocation[0] >= 0.20:
+                    if playerLocation[1] < .64:
+                        p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                    elif playerLocation[1] > 0.7:
+                        p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                elif 0.39 >= round(playerLocation[0], 2) >= 0.29:
+                    p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                elif 0.48 >= round(playerLocation[0], 2) >= 0.39:
+                    if playerLocation[1] < .54:
+                        p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                    elif playerLocation[1] > 0.6:
+                        p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                elif 0.66 >= playerLocation[0] >= 0.49:
+                    p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                elif 0.79 >= playerLocation[0] >= 0.67:
+                    if playerLocation[1] < .59:
+                        p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                    elif playerLocation[1] > 0.65:
+                        p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                elif 0.92 >= playerLocation[0] >= 0.80:
+                    p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                else:
                     if playerLocation[1] < .79:
                         p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
-                elif self.GamePage == 2:
-                    playerLocation = p.getLocation()
+                if .99 > playerLocation[0] > .92 and playerLocation[1] > 0.79:
+                    p.setLocation(playerLocation[0], 0.79)
+            elif self.GamePage == 4:
+                playerLocation = p.getLocation()
+                if 0.09 >= playerLocation[0] >= 0.00:
                     if playerLocation[1] < .79:
                         p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
-                    elif playerLocation[1] <= 1.10 and 0.39 < playerLocation[0] < 0.68:
-                        p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
-                    if .97 > playerLocation[0] > .70 and playerLocation[1] > 0.79:
-                        p.setLocation(playerLocation[0], 0.79)
-                elif self.GamePage == 3:
-                    playerLocation = p.getLocation()
-                    if 0.28 >= playerLocation[0] >= 0.20:
-                        if playerLocation[1] < .64:
-                            p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
-                        elif playerLocation[1] > 0.7:
-                            p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
-                    elif 0.39 >= round(playerLocation[0], 2) >= 0.29:
-                        p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
-                    elif 0.48 >= round(playerLocation[0], 2) >= 0.39:
-                        if playerLocation[1] < .54:
-                            p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
-                        elif playerLocation[1] > 0.6:
-                            p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
-                    elif 0.66 >= playerLocation[0] >= 0.49:
-                        p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
-                    elif 0.79 >= playerLocation[0] >= 0.67:
-                        if playerLocation[1] < .59:
-                            p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
-                        elif playerLocation[1] > 0.65:
-                            p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
-                    elif 0.92 >= playerLocation[0] >= 0.80:
-                        p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
-                    else:
-                        if playerLocation[1] < .79:
-                            p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
-                    if .99 > playerLocation[0] > .92 and playerLocation[1] > 0.79:
-                        p.setLocation(playerLocation[0], 0.79)
-                elif self.GamePage == 4:
-                    playerLocation = p.getLocation()
-                    if 0.09 >= playerLocation[0] >= 0.00:
-                        if playerLocation[1] < .79:
-                            p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
-                    elif 0.30 >= playerLocation[0] >= 0.10:
-                        if self.underSlider(p):
-                            pass
-                sleep(0.005)
-            else:
-                sleep(0.005)
+                elif 0.30 >= playerLocation[0] >= 0.10:
+                    if self.underSlider(p):
+                        pass
 
     def underSlider(self, p):
         # TODO: Add GameSliders array
@@ -292,10 +289,8 @@ class Game:
 
     @staticmethod
     def changeLocation(p):
-        while True:
-            playerLocation = p.getLocation()
-            playerLocation[0] = playerLocation[0] + p.getVelocityX()
-            sleep(0.005)
+        playerLocation = p.getLocation()
+        playerLocation[0] = playerLocation[0] + p.getVelocityX()
 
     def loseLives(self, p):
         self.GameLives -= 1
@@ -333,14 +328,12 @@ class Game:
             sleep(0.01)
 
     def updateLocation(self, p):
-        while True:
-            if self.GameMode == 1:
-                self.Session.send(';' + str(self.GamePage) + ';' + str(round(p.getLocation()[0], 2)) + ';' + str(round(p.getLocation()[1], 2)))
-                self.Player2.refresh()
-                self.Player1.refresh()
-            else:
-                p.refresh()
-            sleep(0.001)
+        if self.GameMode == 1:
+            self.Session.send(';' + str(self.GamePage) + ';' + str(round(p.getLocation()[0], 2)) + ';' + str(round(p.getLocation()[1], 2)))
+            self.Player2.refresh()
+            self.Player1.refresh()
+        else:
+            p.refresh()
 
     def startGame(self, t):
         self.setGamemode(t)
@@ -400,11 +393,9 @@ class Game:
         self.GameMode = g
 
     def showLocation(self, p):
-        while True:
-            if self.Configuration['Settings']['Show-Position'] == '1':
-                self.PlayerPosition.place(relx=.05, rely=.05)
-                self.currentLocation.set(f'L: {p.getLocation()[0]:.2f}, {p.getLocation()[1]:.2f} | X: {p.getVelocityX()}')
-            sleep(0.01)
+        if self.Configuration['Settings']['Show-Position'] == '1':
+            self.PlayerPosition.place(relx=.05, rely=.05)
+            self.currentLocation.set(f'L: {p.getLocation()[0]:.2f}, {p.getLocation()[1]:.2f} | X: {p.getVelocityX()}')
 
 
 if __name__ == '__main__':

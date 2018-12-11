@@ -51,14 +51,6 @@ class Levels:
                             self.whiteFloor6, self.whiteFloor7, self.whiteFloor8, self.whiteFloor9, self.whiteFloor10,
                             self.whiteFloor11, self.whiteSlider, self.whiteSlider2]
 
-    def clearScreen(self):
-        try:
-            print('Working!')
-            for gameAsset in self.levelAssets:
-                gameAsset.place_forget()
-        except:
-            pass
-
     def draw(self, levelNumber=1):
         self.GameInstance.clearScreen()
         if levelNumber == 1:
