@@ -24,6 +24,9 @@ UNSTABLE: 11/12/2018 | 18:14
 
 '''
 
+# Ideas:
+# "Red" level with gradient before/affter
+
 # TODO: Move update functions into a separate class
 # TODO: Add all settings assets into an array
 # TODO: Saving & exiting buttons on settings screen
@@ -336,6 +339,7 @@ class Game:
             p.refresh()
 
     def startGame(self, t):
+        # self.GameWindow.config(bg=self.C_RED)
         self.setGamemode(t)
         if t == 0:
             self.drawStart()

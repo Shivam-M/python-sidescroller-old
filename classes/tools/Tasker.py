@@ -31,12 +31,12 @@ class REPEATED_TASK:
         self.runningThread.start()
 
     def execute(self):
-        while self.temporaryCondition:
-            while self.threadRunning:
+        while self.threadRunning:
+            try:
                 self.temporaryThread = Thread(target=self.threadFunction, args=self.threadArguments)
                 self.temporaryThread.start()
                 sleep(self.temporaryDelay)
-            else:
+            except RuntimeError:
                 break
 
     def stop(self):

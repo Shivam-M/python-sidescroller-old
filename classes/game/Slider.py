@@ -25,10 +25,13 @@ class Slider:
 
     def updateLocation(self):
         while True:
-            currentLocation = self.getLocation()
-            self.setLocation(currentLocation[0] + self.getVelocityX(), currentLocation[1])
-            self.refresh()
-            sleep(0.01)
+            try:
+                currentLocation = self.getLocation()
+                self.setLocation(currentLocation[0] + self.getVelocityX(), currentLocation[1])
+                self.refresh()
+                sleep(0.01)
+            except:
+                break
 
     def draw(self, x, y):
         self.Location = [x, y]
@@ -37,6 +40,8 @@ class Slider:
         self.THREAD_MOVEMENT.start()
 
     def place_forget(self):
+        self.SliderItem.place_forget()
+        self.SliderItem = None
         self.SliderItem.place_forget()
 
     def hide(self):
