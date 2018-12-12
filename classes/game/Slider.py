@@ -12,25 +12,32 @@ class Slider:
         self.GameInstance = g
 
         self.SliderItem = Label(self.Window, text='❰ ❱', font=('Arial', 6, 'bold'), fg=self.Colour, bg=self.Colour, width=10, height=1)
+        self.SliderActive = True
 
         self.THREAD_AI = Thread(target=self.moveAround, args=())
         self.THREAD_MOVEMENT = Thread(target=self.updateLocation, args=())
 
     def moveAround(self):
         while True:
-            self.setVelocityX(-0.0025)
-            sleep(1.75)
-            self.setVelocityX(+0.0025)
-            sleep(1.75)
+            while self.SliderActive:
+                self.setVelocityX(-0.0025)
+                sleep(1.75)
+                self.setVelocityX(+0.0025)
+                sleep(1.75)
+            else:
+                break
 
     def updateLocation(self):
         while True:
-            try:
-                currentLocation = self.getLocation()
-                self.setLocation(currentLocation[0] + self.getVelocityX(), currentLocation[1])
-                self.refresh()
-                sleep(0.01)
-            except:
+            while self.SliderActive:
+                try:
+                    currentLocation = self.getLocation()
+                    self.setLocation(currentLocation[0] + self.getVelocityX(), currentLocation[1])
+                    self.refresh()
+                    sleep(0.01)
+                except:
+                    break
+            else:
                 break
 
     def draw(self, x, y):
@@ -40,9 +47,12 @@ class Slider:
         self.THREAD_MOVEMENT.start()
 
     def place_forget(self):
-        self.SliderItem.place_forget()
-        self.SliderItem = None
-        self.SliderItem.place_forget()
+        try:
+            self.SliderActive = False
+            self.SliderItem.place_forget()
+            self.SliderItem = None
+        finally:
+            pass
 
     def hide(self):
         self.SliderItem.place_forget()

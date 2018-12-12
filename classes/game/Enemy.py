@@ -19,6 +19,7 @@ class Enemy:
 
         self.ShootingLeft = False
         self.ShootingRight = False
+        self.EnemyActive = True
 
         self.EnemyItem = Label(self.Window, text='❰ ❱', font=('Arial', 14, 'bold'), fg=self.Colour, bg='#2F3542', width=2, height=1)
 
@@ -34,46 +35,58 @@ class Enemy:
 
     def moveAround(self):
         while True:
-            self.setVelocityX(-0.0025)
-            sleep(1)
-            self.setVelocityX(+0.0025)
-            sleep(1)
+            if self.EnemyActive:
+                self.setVelocityX(-0.0025)
+                sleep(1)
+                self.setVelocityX(+0.0025)
+                sleep(1)
+            else:
+                break
 
     def updateLocation(self):
         while True:
-            currentLocation = self.getLocation()
-            self.setLocation(currentLocation[0] + self.getVelocityX(), currentLocation[1])
-            self.refresh()
-            sleep(0.01)
+            if self.EnemyActive:
+                currentLocation = self.getLocation()
+                self.setLocation(currentLocation[0] + self.getVelocityX(), currentLocation[1])
+                self.refresh()
+                sleep(0.01)
+            else:
+                break
 
     def checkSurroundings(self):
         while True:
-            for p in self.GamePlayers:
-                playerLocation = p.getLocation()
-                enemyLocation = self.getLocation()
-                if abs(playerLocation[0]-enemyLocation[0]) < 0.35:
-                    if playerLocation[0] < enemyLocation[0]:
-                        self.ShootingLeft = True
+            if self.EnemyActive:
+                for p in self.GamePlayers:
+                    playerLocation = p.getLocation()
+                    enemyLocation = self.getLocation()
+                    if abs(playerLocation[0]-enemyLocation[0]) < 0.35:
+                        if playerLocation[0] < enemyLocation[0]:
+                            self.ShootingLeft = True
+                        else:
+                            self.ShootingRight = True
                     else:
-                        self.ShootingRight = True
-                else:
-                    self.ShootingLeft = False
-                    self.ShootingRight = False
-            sleep(0.02)
+                        self.ShootingLeft = False
+                        self.ShootingRight = False
+                sleep(0.02)
+            else:
+                break
 
     def startShooting(self):
         while True:
-            if not self.BulletCooldown:
-                if self.ShootingLeft:
-                    B = Bullet(self.Window, c='#f1c40f', p=self.GamePlayers[0], g=self.GameInstance)
-                    B.draw(self.getLocation()[0], self.getLocation()[1])
-                    B.setMovement(0)
-                if self.ShootingRight:
-                    B2 = Bullet(self.Window, c='#f1c40f', p=self.GamePlayers[0], g=self.GameInstance)
-                    B2.draw(self.getLocation()[0], self.getLocation()[1])
-                    B2.setMovement(1)
-                Thread(target=self.setCooldown(), args=()).start()
-            sleep(0.01)
+            if self.EnemyActive:
+                if not self.BulletCooldown:
+                    if self.ShootingLeft:
+                        B = Bullet(self.Window, c='#f1c40f', p=self.GamePlayers[0], g=self.GameInstance)
+                        B.draw(self.getLocation()[0], self.getLocation()[1])
+                        B.setMovement(0)
+                    if self.ShootingRight:
+                        B2 = Bullet(self.Window, c='#f1c40f', p=self.GamePlayers[0], g=self.GameInstance)
+                        B2.draw(self.getLocation()[0], self.getLocation()[1])
+                        B2.setMovement(1)
+                    Thread(target=self.setCooldown(), args=()).start()
+                sleep(0.01)
+            else:
+                break
 
     def draw(self, x, y):
         self.Location = [x, y]
@@ -84,6 +97,7 @@ class Enemy:
         self.THREAD_SHOOT.start()
 
     def hide(self):
+        self.EnemyActive = False
         self.EnemyItem.place_forget()
 
     def refresh(self):

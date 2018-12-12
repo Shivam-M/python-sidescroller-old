@@ -121,6 +121,7 @@ class Game:
 
         self.GameAssets = [self.GameTitle, self.GameSingleplayer, self.GameMultiplayer, self.GameCustomize, self.GameSettings, self.GameExitGame, self.GameUpdate]
         self.allFloors = None
+        self.currentLevel = Levels(self.GameWindow, self)
 
         self.Player1 = Player(self.GameWindow, 'white')
         self.Player2 = Player(self.GameWindow, self.C_BLUE)
@@ -183,9 +184,9 @@ class Game:
             arguments = (self.Player2, )
 
         REPEATED_TASK(self.moveDown, a=arguments, t=0.005).run()
-        REPEATED_TASK(self.updateLocation, a=arguments, t=0.001).run()
+        REPEATED_TASK(self.updateLocation, a=arguments, t=0.005).run()
         REPEATED_TASK(self.changeLocation, a=arguments, t=0.005).run()
-        REPEATED_TASK(self.showLocation, a=arguments, t=0.01).run()
+        REPEATED_TASK(self.showLocation, a=arguments, t=0.05).run()
         REPEATED_TASK(self.printThreads).run()
         Thread(target=self.checkBoundary, args=arguments).start()
 
@@ -215,7 +216,7 @@ class Game:
         try:
             for floor in self.allFloors:
                 floor.place_forget()
-        except:
+        finally:
             pass
 
     def myPlayer(self):
@@ -226,10 +227,9 @@ class Game:
 
     def drawPage(self, n):
         self.currentPage.set('GAME PAGE: ' + str(n))
+        self.allFloors = self.currentLevel.get()
         self.clearFloors()
-        currentLevel = Levels(self.GameWindow, self)
-        currentLevel.draw(n)
-        self.allFloors = currentLevel.get()
+        self.currentLevel.draw(n)
 
     def Log(self, m, p='INFO'):
         if self.Configuration['Settings']['Log-Events'] == '1':
@@ -343,8 +343,6 @@ class Game:
         self.setGamemode(t)
         if t == 0:
             self.drawStart()
-            Test2 = Enemy(self.GameWindow, self.Player1, c=self.C_RED, g=self)
-            Test2.draw(.45, 0.755)
         else:
             self.clearScreen()
             b = Button(self.GameWindow, text='HOST', command=lambda: (b.place_forget(), b2.place_forget(), self.host()))
