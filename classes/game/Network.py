@@ -15,6 +15,11 @@ class Host:
         self.randomID = random.randint(1000, 999999)
         self.gameInstance = gi
 
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        Logger.log(f'Hosting on: {s.getsockname()[0]} - use this to connect locally.', 'SERVER')
+        s.close()
+
         self.LIST = []
         self.connectedUsers = {}
         self.gameSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -29,7 +34,6 @@ class Host:
         self.THREAD_LISTEN.start()
 
     def send(self, m):
-        print('HOST', m)
         try:
             for connectedSocket in self.LIST:
                 if connectedSocket != self.gameSocket:
@@ -109,7 +113,6 @@ class Join:
                 Logger.error(e)
                 break
             if data:
-                print(data)
                 arguments = data.split(';')
                 if arguments[0] != str(self.randomID):
                     if arguments[1] == str(self.gameInstance.getPage()):
@@ -118,7 +121,6 @@ class Join:
                         self.gameInstance.getPlayer().hide()
 
     def send(self, m):
-        print('JOIN', m)
         self.gameSocket.send(str.encode(str(self.randomID) + m))
 
 

@@ -172,8 +172,7 @@ class Game:
 
         self.PlayerPage.place(relx=.825, rely=.05)
 
-        self.drawPage(4)
-        self.GamePage = 4
+        self.drawPage(1)
         self.GameWindow.after(1, lambda: self.GameLivesRemaining.place(relx=.41, rely=.15))
         self.GameWindow.after(3000, lambda: self.GameLivesRemaining.place_forget())
 
