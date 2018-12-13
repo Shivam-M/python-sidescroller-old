@@ -79,8 +79,8 @@ class Levels:
             self.whiteFloor9.place(relx=.0, rely=.85)
             self.whiteFloor10.place(relx=.925, rely=.85)
             self.whiteFloor11.place(relx=.47, rely=.85)
-            self.blackBlocker = Blocker(self.Window, self.GameInstance.Player1)
-            self.blackBlocker.draw(.125, .0)
+            # self.blackBlocker = Blocker(self.Window, self.GameInstance.Player1)
+            # self.blackBlocker.draw(.125, .0)
             self.whiteSlider = Slider(self.Window, c=self.W_FG, g=self.GameInstance)
             self.whiteSlider2 = Slider(self.Window, c=self.W_FG, g=self.GameInstance)
             self.whiteSlider.draw(0.875, .85)
@@ -93,3 +93,6 @@ class Levels:
 
     def get(self):
         return self.levelAssets
+
+    def sliders(self):
+        return self.whiteSlider, self.whiteSlider2

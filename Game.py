@@ -172,7 +172,8 @@ class Game:
 
         self.PlayerPage.place(relx=.825, rely=.05)
 
-        self.drawPage(1)
+        self.drawPage(4)
+        self.GamePage = 4
         self.GameWindow.after(1, lambda: self.GameLivesRemaining.place(relx=.41, rely=.15))
         self.GameWindow.after(3000, lambda: self.GameLivesRemaining.place_forget())
 
@@ -282,13 +283,34 @@ class Game:
                 if 0.09 >= playerLocation[0] >= 0.00:
                     if playerLocation[1] < .79:
                         p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
-                elif 0.30 >= playerLocation[0] >= 0.10:
+                elif 0.45 >= playerLocation[0] >= 0.10:
                     if self.underSlider(p):
-                        pass
+                        if playerLocation[1] < .79:
+                            p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                    else:
+                        if playerLocation[1] < 1.05:
+                            p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                elif 0.51 >= playerLocation[0] >= 0.46:
+                    if playerLocation[1] < .79:
+                        p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                elif 0.91 >= playerLocation[0] >= 0.52:
+                    if self.underSlider(p):
+                        if playerLocation[1] < .79:
+                            p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                    else:
+                        if playerLocation[1] < 1.05:
+                            p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                else:
+                    if playerLocation[1] < .79:
+                        p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
 
     def underSlider(self, p):
-        # TODO: Add GameSliders array
-        pass
+        allSliders = self.currentLevel.sliders()
+        for slider in allSliders:
+            if slider.getLocation()[0] < p.getLocation()[0] < slider.getLocation()[0] + 0.07:
+                return True
+        return False
+
 
     @staticmethod
     def changeLocation(p):
@@ -339,16 +361,25 @@ class Game:
             p.refresh()
 
     def startGame(self, t):
-        # self.GameWindow.config(bg=self.C_RED)
         self.setGamemode(t)
         if t == 0:
             self.drawStart()
         else:
-            self.clearScreen()
-            b = Button(self.GameWindow, text='HOST', command=lambda: (b.place_forget(), b2.place_forget(), self.host()))
-            b.pack()
-            b2 = Button(self.GameWindow, text='JOIN', command=lambda: (b.place_forget(), b2.place_forget(), self.join()))
-            b2.pack()
+            def proceed():
+                warning.place_forget()
+                warninginfo.place_forget()
+                carryon.place_forget()
+                self.clearScreen()
+                hostButton = Button(self.GameWindow, text='HOST GAME', font=('Segoe UI', 10, 'bold'), bd=0, bg=self.W_FG, fg=self.W_BG, width=40, height=5, command=lambda: (hostButton.place_forget(), joinButton.place_forget(), self.host()))
+                hostButton.place(relx=.05, rely=.1)
+                joinButton = Button(self.GameWindow, text='JOIN GAME', font=('Segoe UI', 10, 'bold'), bd=0, bg=self.W_FG, fg=self.W_BG, width=40, height=5, command=lambda: (hostButton.place_forget(), joinButton.place_forget(), self.join()))
+                joinButton.place(relx=.05, rely=.525)
+            warning = Label(self.GameWindow, text='UNAVAILABLE', font=('Verdana', 14, 'bold'), fg=self.C_RED, bg=self.W_BG)
+            warning.place(relx=.45, rely=.4)
+            warninginfo = Label(self.GameWindow, text='Multiplayer is currently unsupported however you\ncan still attempt to host or join a game.', font=('Verdana', 10, 'bold'), fg=self.C_LIGHTGRAY, bg=self.W_BG, justify=LEFT)
+            warninginfo.place(relx=.45, rely=.5)
+            carryon = Button(self.GameWindow, text='→', font=('Arial', 10, 'bold'), fg=self.C_RED, bg=self.W_BG, bd=0, height=1, command=lambda: proceed())
+            carryon.place(relx=.88, rely=.555)
 
     def host(self):
         self.GameState = 'host'
