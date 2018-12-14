@@ -1,6 +1,7 @@
 from tkinter import *
 
 from classes.game.Enemy import Enemy
+from classes.game.Plate import Plate
 from classes.game.Slider import Slider
 from classes.game.Blocker import Blocker
 
@@ -10,6 +11,7 @@ class Levels:
 
         self.Window = w
         self.GameInstance = g
+        self.Colours = ['Red', 'Green', 'Blue', 'Orange', 'Yellow']
 
         self.W_BG = '#2F3542'
         self.W_FG = '#FFFFFF'
@@ -47,6 +49,15 @@ class Levels:
         self.whiteFloor9 = Label(self.Window, bg=self.W_FG, height=3, width=10)
         self.whiteFloor10 = Label(self.Window, bg=self.W_FG, height=3, width=100)
         self.whiteFloor11 = Label(self.Window, bg=self.W_FG, height=3, width=5)
+        self.whiteSlider = Slider(self.Window, c=self.W_FG, g=self.GameInstance)
+        self.whiteSlider2 = Slider(self.Window, c=self.W_FG, g=self.GameInstance)
+
+        # Game Level 5:
+        self.colouredPlate = Plate(self.Window, g=self.GameInstance, c=self.C_BLUE)
+        self.colouredPlate2 = Plate(self.Window, g=self.GameInstance, c=self.C_GREEN)
+        self.colouredPlate3 = Plate(self.Window, g=self.GameInstance, c=self.C_RED)
+        self.colouredPlate4 = Plate(self.Window, g=self.GameInstance, c=self.C_YELLOW)
+        self.colouredPlate5 = Plate(self.Window, g=self.GameInstance, c=self.C_ORANGE)
 
         self.levelAssets = [self.whiteFloor, self.whiteFloor2, self.whiteFloor3, self.whiteFloor4, self.whiteFloor5,
                             self.whiteFloor6, self.whiteFloor7, self.whiteFloor8, self.whiteFloor9, self.whiteFloor10,
@@ -68,31 +79,38 @@ class Levels:
             self.whiteFloor6.place(relx=.2, rely=.7)
             self.whiteFloor7.place(relx=.4, rely=.6)
             self.whiteFloor8.place(relx=.68, rely=.65)
-            self.Window.config(bg='#2F3542')
             try:
                 self.levelAssets.remove(self.whiteSlider)
                 self.levelAssets.remove(self.whiteSlider2)
             except:
                 pass
         elif levelNumber == 4:
-            # self.Window.config(bg='#141414')
             self.whiteFloor9.place(relx=.0, rely=.85)
             self.whiteFloor10.place(relx=.925, rely=.85)
             self.whiteFloor11.place(relx=.47, rely=.85)
             # self.blackBlocker = Blocker(self.Window, self.GameInstance.Player1)
             # self.blackBlocker.draw(.125, .0)
-            self.whiteSlider = Slider(self.Window, c=self.W_FG, g=self.GameInstance)
-            self.whiteSlider2 = Slider(self.Window, c=self.W_FG, g=self.GameInstance)
             self.whiteSlider.draw(0.875, .85)
             self.whiteSlider2.draw(0.415, .85)
             self.levelAssets.append(self.whiteSlider)
             self.levelAssets.append(self.whiteSlider2)
         elif levelNumber == 5:
-            self.levelAssets.remove(self.whiteSlider)
-            self.levelAssets.remove(self.whiteSlider2)
+            # self.levelAssets.remove(self.whiteSlider)
+            # self.levelAssets.remove(self.whiteSlider2)
+            self.colouredPlate.draw(.05, .79)
+            self.colouredPlate2.draw(.25, .79)
+            self.colouredPlate3.draw(.45, .79)
+            self.colouredPlate4.draw(.65, .79)
+            self.colouredPlate5.draw(.85, .79)
 
     def get(self):
         return self.levelAssets
 
     def sliders(self):
         return self.whiteSlider, self.whiteSlider2
+
+    def plates(self):
+        return self.colouredPlate, self.colouredPlate2, self.colouredPlate3, self.colouredPlate4, self.colouredPlate5
+
+    def colour(self):
+        return self.selectedColour

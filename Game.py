@@ -18,23 +18,20 @@ from classes.tools.Logger import Logger
 from classes.tools.Tasker import REPEATED_TASK
 from classes.tools.Tasker import DELAYED_TASK
 
-'''
-
-UNSTABLE: 11/12/2018 | 18:14
-
-'''
-
 # Ideas:
 # "Red" level with gradient before/affter
 
-# TODO: Move update functions into a separate class
-# TODO: Add all settings assets into an array
-# TODO: Saving & exiting buttons on settings screen
-# TODO: General optimizations (performance, network)
-# TODO: Add client-server connection option as opposed to the current peer-to-peer
+# TODO: Move update functions into a separate class [DONE]
+# TODO: Add all settings assets into an array [DONE]
+# TODO: Saving & exiting buttons on settings screen [DONE - UNFUNCTIONAL]
+# TODO: General optimizations (performance, network) [DONE]
+# TODO: Add client-server connection option as opposed to the current peer-to-peer [ALTERNATIVE FOUND]
 # TODO: Player customization (colours, name-tags)
 # TODO: Complete Coin class
 # TODO: Add page property to entities
+
+# TODO: Boss fight
+# TODO: Colour game
 
 
 class Game:
@@ -172,7 +169,9 @@ class Game:
 
         self.PlayerPage.place(relx=.825, rely=.05)
 
-        self.drawPage(1)
+        # self.drawPage(1)
+        self.drawPage(5)
+        self.GamePage = 5
         self.GameWindow.after(1, lambda: self.GameLivesRemaining.place(relx=.41, rely=.15))
         self.GameWindow.after(3000, lambda: self.GameLivesRemaining.place_forget())
 
@@ -302,6 +301,19 @@ class Game:
                 else:
                     if playerLocation[1] < .79:
                         p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+            elif self.GamePage == 5:
+                playerLocation = p.getLocation()
+                # 0.04, 0.13
+                # 0.24, 0.33
+                # 0.44, 0.53
+                # 0.64, 0.73
+                # 0.84, 0.93
+                if False:
+                    pass
+                else:
+                    if playerLocation[1] < .71:
+                        p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+
 
     def underSlider(self, p):
         allSliders = self.currentLevel.sliders()
