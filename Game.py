@@ -4,6 +4,7 @@ from time import sleep
 from tkinter import *
 
 from classes.screens.Customize import Customize
+from classes.screens.Over import Over
 from classes.screens.Settings import Settings
 from classes.screens.Update import Update
 from classes.screens.Levels import Levels
@@ -50,7 +51,7 @@ class Game:
         self.W_FONT4 = ('MS PGothic', 11, 'bold')
 
         self.GameMode = 0
-        self.GameVersion = 0.53
+        self.GameVersion = 0.48
         self.GamePage = 1
         self.GameLives = 3
         self.GameCooldown = 20
@@ -319,8 +320,7 @@ class Game:
         if self.GameLives == 0:
             self.GamePage = 0
             self.clearScreen()
-            t = Label(self.GameWindow, text='GAME OVER', font=self.W_FONT, bg=self.W_BG, fg=self.C_RED)
-            t.place(relx=.049, rely=.2)
+            Over(self.GameWindow, self, 0).draw()
             self.GamePage = 1
             self.drawPage(1)
             p.setLocation(0.05, .5)
