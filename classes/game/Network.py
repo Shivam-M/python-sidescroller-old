@@ -70,6 +70,7 @@ class Host:
                             arguments = receivedData.split(';')
                             if arguments[0] != str(self.randomID):
                                 if arguments[1] == str(self.gameInstance.getPage()):
+                                    self.otherPlayer.show()
                                     self.otherPlayer.setLocation(round(float(arguments[2]), 2), round(float(arguments[3]), 2))
                                 else:
                                     self.otherPlayer.hide()
@@ -78,8 +79,8 @@ class Host:
 
 
 class Join:
-    def __init__(self, t, gi):
-        self.connectionIP = '127.0.0.1'
+    def __init__(self, t, gi, i):
+        self.connectionIP = i
         self.connectionPort = 6969
 
         self.randomID = random.randint(1000, 999999)
@@ -116,6 +117,7 @@ class Join:
                 arguments = data.split(';')
                 if arguments[0] != str(self.randomID):
                     if arguments[1] == str(self.gameInstance.getPage()):
+                        self.gameInstance.getPlayer().show()
                         self.gameInstance.getPlayer().setLocation(round(float(arguments[2]), 2), round(float(arguments[3]), 2))
                     else:
                         self.gameInstance.getPlayer().hide()

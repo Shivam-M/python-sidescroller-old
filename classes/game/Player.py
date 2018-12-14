@@ -13,16 +13,22 @@ class Player:
 
         self.PlayerItem = Label(self.Window, text='lol', fg=self.Colour, bg=self.Colour, width=2, height=1)
         self.PlayerJumping = False
+        self.PlayerHidden = False
 
     def draw(self, x, y):
         self.Location = [x, y]
         self.PlayerItem.place(relx=x, rely=y)
 
     def hide(self):
+        self.PlayerHidden = True
         self.PlayerItem.place_forget()
 
+    def show(self):
+        self.PlayerHidden = False
+
     def refresh(self):
-        self.PlayerItem.place(relx=self.getLocation()[0], rely=self.getLocation()[1])
+        if not self.PlayerHidden:
+            self.PlayerItem.place(relx=self.getLocation()[0], rely=self.getLocation()[1])
 
     def jump(self, ty):
         self.PlayerJumping = True
@@ -75,7 +81,9 @@ class Player:
 
     def updateLocation(self):
         while True:
-            self.refresh()
+            print('T', self.PlayerHidden)
+            if not self.PlayerHidden:
+                self.refresh()
             sleep(0.0005)
 
 

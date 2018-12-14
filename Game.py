@@ -10,7 +10,6 @@ from classes.screens.Levels import Levels
 
 from classes.game.Player import Player
 from classes.game.Network import Host, Join
-from classes.game.Enemy import Enemy
 
 from classes.tools.Error import Error
 from classes.tools.Logger import Logger
@@ -310,7 +309,6 @@ class Game:
                 return True
         return False
 
-
     @staticmethod
     def changeLocation(p):
         playerLocation = p.getLocation()
@@ -369,10 +367,14 @@ class Game:
                 warninginfo.place_forget()
                 carryon.place_forget()
                 self.clearScreen()
-                hostButton = Button(self.GameWindow, text='HOST GAME', font=('Segoe UI', 10, 'bold'), bd=0, bg=self.W_FG, fg=self.W_BG, width=40, height=5, command=lambda: (hostButton.place_forget(), joinButton.place_forget(), self.host()))
-                hostButton.place(relx=.05, rely=.1)
-                joinButton = Button(self.GameWindow, text='JOIN GAME', font=('Segoe UI', 10, 'bold'), bd=0, bg=self.W_FG, fg=self.W_BG, width=40, height=5, command=lambda: (hostButton.place_forget(), joinButton.place_forget(), self.join()))
-                joinButton.place(relx=.05, rely=.525)
+                joinEntry = Entry(self.GameWindow, text='JOIN GAME', font=('Segoe UI', 10, 'bold'), bd=0, bg=self.W_FG, fg=self.W_BG, width=42)
+                joinEntry.place(relx=.085, rely=.85)
+                hostButton = Button(self.GameWindow, text='HOST GAME', font=('Segoe UI', 10, 'bold'), bd=0, bg=self.W_FG, fg=self.W_BG, width=40, height=5, command=lambda: (joinEntry.place_forget(), ipLabel.place_forget(), hostButton.place_forget(), joinButton.place_forget(), self.host()))
+                hostButton.place(relx=.05, rely=.08)
+                joinButton = Button(self.GameWindow, text='JOIN GAME', font=('Segoe UI', 10, 'bold'), bd=0, bg=self.W_FG, fg=self.W_BG, width=40, height=5, command=lambda: (joinEntry.place_forget(), ipLabel.place_forget(), hostButton.place_forget(), joinButton.place_forget(), self.join(joinEntry.get())))
+                joinButton.place(relx=.05, rely=.505)
+                ipLabel = Label(self.GameWindow, text='IP', font=('Segoe UI', 10, 'bold'), bd=0, fg=self.W_FG, bg=self.W_BG)
+                ipLabel.place(relx=.05, rely=.85)
             warning = Label(self.GameWindow, text='UNAVAILABLE', font=('Verdana', 14, 'bold'), fg=self.C_RED, bg=self.W_BG)
             warning.place(relx=.45, rely=.4)
             warninginfo = Label(self.GameWindow, text='Multiplayer is currently unsupported however you\ncan still attempt to host or join a game.', font=('Verdana', 10, 'bold'), fg=self.C_LIGHTGRAY, bg=self.W_BG, justify=LEFT)
@@ -387,10 +389,12 @@ class Game:
         self.drawStart()
         self.Session.run()
 
-    def join(self):
+    def join(self, ip):
+        if ip == '':
+            ip = '127.0.0.1'
         self.GameState = 'join'
         self.Player2.draw(.1, .5)
-        self.Session = Join(self.Player2, self)
+        self.Session = Join(self.Player2, self, ip)
         self.drawStart()
         self.Session.connect()
         self.Session.startlisten()
