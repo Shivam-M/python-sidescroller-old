@@ -86,6 +86,8 @@ class Game:
 
         self.threadBypass = False
         self.Session = None
+        self.ColoursR = [self.C_RED, self.C_GREEN, self.C_BLUE, self.C_ORANGE, self.C_YELLOW]
+        self.ColoursI = ['Red', 'Green', 'Blue', 'Orange', 'Yellow']
 
         self.GameWindow = Tk()
         self.GameWindow.geometry(self.W_SIZE)
@@ -170,8 +172,8 @@ class Game:
         self.PlayerPage.place(relx=.825, rely=.05)
 
         # self.drawPage(1)
-        self.drawPage(5)
-        self.GamePage = 5
+        self.drawPage(1)
+        self.GamePage = 1
         self.GameWindow.after(1, lambda: self.GameLivesRemaining.place(relx=.41, rely=.15))
         self.GameWindow.after(3000, lambda: self.GameLivesRemaining.place_forget())
 
@@ -303,17 +305,40 @@ class Game:
                         p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
             elif self.GamePage == 5:
                 playerLocation = p.getLocation()
-                # 0.04, 0.13
-                # 0.24, 0.33
-                # 0.44, 0.53
-                # 0.64, 0.73
-                # 0.84, 0.93
-                if False:
-                    pass
+                if self.currentLevel.active():
+                    if self.underPlate(p):
+                        if self.currentLevel.checkColours:
+                            self.colourCheck(p)
+                            self.currentLevel.checkColours = False
+                        if playerLocation[1] < .71:
+                            p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                        elif playerLocation[1] > .78:
+                            p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+                    else:
+                        if playerLocation[1] > .78:
+                            p.setLocation(playerLocation[0], playerLocation[1] + 0.9)
+                        else:
+                            p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
                 else:
-                    if playerLocation[1] < .71:
+                    if playerLocation[1] < .79:
                         p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
 
+    def underPlate(self, p):
+        allPlates = self.currentLevel.plates()
+        for plate in allPlates:
+            if plate.getLocation()[0] - 0.01 < p.getLocation()[0] < plate.getLocation()[0] + 0.1:
+                if not plate.isHidden():
+                    return True
+        return False
+
+    def colourCheck(self, p):
+        allPlates = self.currentLevel.plates()
+        for plate in allPlates:
+            if self.currentLevel.selectedColour == self.ColoursI[self.ColoursR.index(plate.cget('bg'))]:
+                pass
+            else:
+                plate.place_forget()
+        return False
 
     def underSlider(self, p):
         allSliders = self.currentLevel.sliders()
@@ -349,15 +374,27 @@ class Game:
             playerLocation = p.getLocation()
             if playerLocation[1] > 0.85:
                 self.loseLives(p)
+                if self.currentLevel.active():
+                    self.currentLevel.activeMode = False
             if playerLocation[0] <= -0.02:
                 if self.GamePage > 1:
                     self.drawPage(self.GamePage - 1)
                     self.GamePage -= 1
                     p.setLocation(0.95, playerLocation[1])
             elif playerLocation[0] >= 1.01:
-                self.drawPage(self.GamePage + 1)
-                self.GamePage += 1
-                p.setLocation(0.05, playerLocation[1])
+                if self.GamePage == 5:
+                    if self.currentLevel.active():
+                        p.setLocation(0.49, 0.71)
+                    else:
+                        self.drawPage(self.GamePage + 1)
+                        self.GamePage += 1
+                else:
+                    self.drawPage(self.GamePage + 1)
+                    self.GamePage += 1
+                    if self.GamePage == 5:
+                        p.setLocation(0.09, playerLocation[1] - 0.15)
+                    else:
+                        p.setLocation(0.05, playerLocation[1])
 
             sleep(0.01)
 

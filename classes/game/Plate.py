@@ -15,16 +15,22 @@ class Plate:
         self.PlateHidden = False
 
     def draw(self, x, y):
+        self.PlateHidden = False
         self.Location = [x, y]
         self.PlateItem.place(relx=x, rely=y)
 
     def place_forget(self):
         try:
-            self.PlateHidden = False
+            self.PlateHidden = True
             self.PlateItem.place_forget()
-            self.PlateItem = None
         finally:
             pass
+
+    def isHidden(self):
+        return self.PlateHidden
+
+    def cget(self, s):
+        return self.PlateItem.cget(s)
 
     def hide(self):
         self.PlateItem.place_forget()

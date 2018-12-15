@@ -1,4 +1,5 @@
 from tkinter import *
+from random import choice
 
 from classes.game.Enemy import Enemy
 from classes.game.Plate import Plate
@@ -31,6 +32,14 @@ class Levels:
         self.C_GRAY = '#95A5A6'
         self.C_LIGHTGRAY = '#BDC3C7'
 
+        self.ColStr = 'Go to the colour {0}'
+
+        self.ColVar = StringVar()
+        self.ColVar.set(self.ColStr)
+        self.checkColours = False
+        self.activeMode = False
+        self.numGames = 0
+
         # Game Level 1:
         self.whiteFloor = Label(self.Window, bg=self.W_FG, height=3, width=200)
 
@@ -58,10 +67,13 @@ class Levels:
         self.colouredPlate3 = Plate(self.Window, g=self.GameInstance, c=self.C_RED)
         self.colouredPlate4 = Plate(self.Window, g=self.GameInstance, c=self.C_YELLOW)
         self.colouredPlate5 = Plate(self.Window, g=self.GameInstance, c=self.C_ORANGE)
+        self.whiteFloor12 = Label(self.Window, bg=self.W_FG, height=3, width=200)
+        self.ColourLabel = Label(self.Window, textvariable=self.ColVar, font=self.W_FONT2, bg=self.W_BG, fg=self.W_FG)
 
         self.levelAssets = [self.whiteFloor, self.whiteFloor2, self.whiteFloor3, self.whiteFloor4, self.whiteFloor5,
                             self.whiteFloor6, self.whiteFloor7, self.whiteFloor8, self.whiteFloor9, self.whiteFloor10,
-                            self.whiteFloor11]
+                            self.whiteFloor11, self.colouredPlate, self.colouredPlate2, self.colouredPlate3,
+                            self.colouredPlate4, self.colouredPlate4, self.ColourLabel, self.whiteFloor12]
 
     def draw(self, levelNumber=1):
         self.GameInstance.clearScreen()
@@ -102,6 +114,38 @@ class Levels:
             self.colouredPlate3.draw(.45, .79)
             self.colouredPlate4.draw(.65, .79)
             self.colouredPlate5.draw(.85, .79)
+            self.activeMode = True
+            self.chooser()
+
+    def chooser(self):
+        if self.activeMode:
+            if self.numGames < 3:
+                def sd():
+                    self.setDown = False
+                self.checkColours = False
+                self.colouredPlate.draw(.05, .79)
+                self.colouredPlate2.draw(.25, .79)
+                self.colouredPlate3.draw(.45, .79)
+                self.colouredPlate4.draw(.65, .79)
+                self.colouredPlate5.draw(.85, .79)
+                self.ColourLabel = Label(self.Window, textvariable=self.ColVar, font=self.W_FONT2, bg=self.W_BG, fg=self.W_FG)
+                self.ColourLabel.place(relx=.395, rely=.22)
+                self.selectedColour = choice(self.Colours)
+                self.ColVar.set(self.ColStr.format(self.selectedColour))
+                self.Window.after(3000, lambda: sd())
+                self.Window.after(3000, lambda: self.uncheck())
+
+            else:
+                self.activeMode = False
+                self.whiteFloor12.place(relx=.0, rely=.85)
+
+    def active(self):
+        return self.activeMode
+
+    def uncheck(self):
+        self.numGames += 1
+        self.checkColours = True
+        self.Window.after(3000, lambda: (self.ColourLabel.place_forget(), self.chooser()))
 
     def get(self):
         return self.levelAssets

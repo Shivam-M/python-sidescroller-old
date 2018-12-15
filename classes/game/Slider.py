@@ -41,16 +41,22 @@ class Slider:
                 break
 
     def draw(self, x, y):
-        self.Location = [x, y]
-        self.SliderItem.place(relx=x, rely=y)
-        self.THREAD_AI.start()
-        self.THREAD_MOVEMENT.start()
+        try:
+            self.Location = [x, y]
+            self.SliderItem.place(relx=x, rely=y)
+            self.THREAD_AI.start()
+            self.THREAD_MOVEMENT.start()
+        except AttributeError:
+            pass
 
     def place_forget(self):
         try:
-            self.SliderActive = False
-            self.SliderItem.place_forget()
-            self.SliderItem = None
+            try:
+                self.SliderActive = False
+                self.SliderItem.place_forget()
+                self.SliderItem = None
+            except AttributeError:
+                pass
         finally:
             pass
 
