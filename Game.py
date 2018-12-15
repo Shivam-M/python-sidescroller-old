@@ -143,12 +143,13 @@ class Game:
                 self.myPlayer().setVelocityX(+0.0025)
             elif event.keysym == 'Up':
                 if not self.myPlayer().isJumping():
-                    if keyPressedL:
-                        self.myPlayer().jump(0)
-                    elif keyPressedR:
-                        self.myPlayer().jump(1)
-                    else:
-                        self.myPlayer().jump(2)
+                    if self.myPlayer().movingY():
+                        if keyPressedL:
+                            self.myPlayer().jump(0)
+                        elif keyPressedR:
+                            self.myPlayer().jump(1)
+                        else:
+                            self.myPlayer().jump(2)
 
         def handleLeftRelease(event):
             global keyPressedL, keyPressedR

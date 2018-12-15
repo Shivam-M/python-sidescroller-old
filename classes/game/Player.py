@@ -14,6 +14,9 @@ class Player:
         self.PlayerItem = Label(self.Window, text='lol', fg=self.Colour, bg=self.Colour, width=2, height=1)
         self.PlayerJumping = False
         self.PlayerHidden = False
+        self.PlayerMoving = False
+        
+        Thread(target=self.velocityChecker).start()
 
     def draw(self, x, y):
         self.Location = [x, y]
@@ -54,6 +57,19 @@ class Player:
         self.setVelocityX(self.getVelocityX() / 2)
         sleep(0.03)
         self.PlayerJumping = False
+        
+    def velocityChecker(self):
+        while True:
+            loc = self.getLocation()[1]
+            sleep(0.008)
+            loc2 = self.getLocation()[1]
+            if loc == loc2:
+                self.PlayerMoving = True
+            else:
+                self.PlayerMoving = False
+                
+    def movingY(self):
+        return self.PlayerMoving
 
     def gravity(self):
         return self.Gravity
