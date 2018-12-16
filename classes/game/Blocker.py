@@ -61,6 +61,6 @@ if __name__ == '__main__':
     root = Tk()
     root.config(bg='#141414')
     root.geometry('400x200')
-    Test = Blocker(root, c='#FFFFFF')
+    Test = Blocker(root, c='#FFFFFF', p=None)
     button = Button(command=lambda: Test.draw(.8, .8)).pack()
     root.mainloop()

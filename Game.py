@@ -16,10 +16,7 @@ from classes.tools.Error import Error
 from classes.tools.Logger import Logger
 
 from classes.tools.Tasker import REPEATED_TASK
-from classes.tools.Tasker import DELAYED_TASK
-
-# Ideas:
-# "Red" level with gradient before/affter
+# from classes.tools.Tasker import DELAYED_TASK
 
 # TODO: Move update functions into a separate class [DONE]
 # TODO: Add all settings assets into an array [DONE]
@@ -29,14 +26,16 @@ from classes.tools.Tasker import DELAYED_TASK
 # TODO: Player customization (colours, name-tags)
 # TODO: Complete Coin class
 # TODO: Add page property to entities
+# TODO: Re-implement blockers
 
 # TODO: Boss fight
-# TODO: Colour game
+# TODO: Colour game [DONE]
 
 
 class Game:
     def __init__(self):
         self.W_BG = '#2F3542'
+        self.W_BG = '#141414'
         self.W_FG = '#FFFFFF'
         self.W_SIZE = '600x300'
         self.W_SIZE = '800x300'
@@ -159,12 +158,14 @@ class Game:
                 self.GamePage += 1
 
         def handleLeftRelease(event):
+            print(event.x)
             global keyPressedL, keyPressedR
             keyPressedL = False
             if not keyPressedR:
                 self.myPlayer().setVelocityX(0)
 
         def handleRightRelease(event):
+            print(event.x)
             global keyPressedL, keyPressedR
             keyPressedR = False
             if not keyPressedL:

@@ -45,7 +45,6 @@ class Tracer:
         PLoc = self.Players.getLocation()
         TLoc = self.getLocation()
         Gradient = (TLoc[1] - PLoc[1]) / (TLoc[0] - PLoc[0])
-        Gradient = (PLoc[1] - TLoc[1]) / (PLoc[0] - TLoc[0])
         orig = TLoc[1]
         Gradient *= -1
         print(Gradient)

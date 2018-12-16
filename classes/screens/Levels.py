@@ -6,7 +6,7 @@ from random import choice
 from classes.game.Enemy import Enemy
 from classes.game.Plate import Plate
 from classes.game.Slider import Slider
-from classes.game.Blocker import Blocker
+# from classes.game.Blocker import Blocker
 
 
 class Levels:
@@ -41,8 +41,10 @@ class Levels:
         self.checkColours = False
         self.activeMode = False
         self.numGames = 0
+        self.selectedColour = None
 
         # Game Level 1:
+        self.mainEnemy = Enemy(self.Window, self.GameInstance.Player1, c=self.C_RED, g=self)
         self.whiteFloor = Label(self.Window, bg=self.W_FG, height=3, width=200)
 
         # Game Level 2:
