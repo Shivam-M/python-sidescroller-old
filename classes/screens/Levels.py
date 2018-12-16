@@ -1,3 +1,5 @@
+import time
+from threading import Thread
 from tkinter import *
 from random import choice
 
@@ -70,10 +72,13 @@ class Levels:
         self.whiteFloor12 = Label(self.Window, bg=self.W_FG, height=3, width=200)
         self.ColourLabel = Label(self.Window, textvariable=self.ColVar, font=self.W_FONT2, bg=self.W_BG, fg=self.W_FG)
 
+        # Game Level 6:
+        self.blackFloor = Label(self.Window, bg='#141414', height=3, width=200)
+
         self.levelAssets = [self.whiteFloor, self.whiteFloor2, self.whiteFloor3, self.whiteFloor4, self.whiteFloor5,
                             self.whiteFloor6, self.whiteFloor7, self.whiteFloor8, self.whiteFloor9, self.whiteFloor10,
                             self.whiteFloor11, self.colouredPlate, self.colouredPlate2, self.colouredPlate3,
-                            self.colouredPlate4, self.colouredPlate4, self.ColourLabel, self.whiteFloor12]
+                            self.colouredPlate4, self.colouredPlate4, self.ColourLabel, self.whiteFloor12, self.GameInstance.BossItem, self.blackFloor]
 
     def draw(self, levelNumber=1):
         self.GameInstance.clearScreen()
@@ -116,6 +121,38 @@ class Levels:
             self.colouredPlate5.draw(.85, .79)
             self.activeMode = True
             self.chooser()
+        elif levelNumber == 6:
+            self.blackFloor.place(relx=.0, rely=.85)
+            self.GameInstance.BossItem.place(relx=.75, rely=.31)
+            self.Window.config(bg=self.C_RED)
+            self.GameInstance.myPlayer().config('#141414')
+            self.GameInstance.PlayerPosition.config(bg=self.C_RED, fg='#141414')
+            self.GameInstance.PlayerPage.config(bg=self.C_RED, fg='#141414')
+            Thread(target=self.bossAI).start()
+            # Thread(target=self.stutter).start()
+
+    def bossAI(self):
+        x = .75
+        y = .31
+        while True:
+            if x > 0:
+                x -= 0.002
+                self.GameInstance.BossItem.place(relx=x, rely=y)
+                time.sleep(0.002)
+            else:
+                break
+        while True:
+            if x < 0.8:
+                x += 0.002
+                self.GameInstance.BossItem.place(relx=x, rely=y)
+                time.sleep(0.002)
+            else:
+                break
+
+    def stutter(self):
+        while True:
+            self.GameInstance.BossItem.place_forget()
+            time.sleep(0.004)
 
     def chooser(self):
         if self.activeMode:

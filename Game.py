@@ -118,6 +118,10 @@ class Game:
         self.currentPage = StringVar()
         self.PlayerPage = Label(self.GameWindow, textvariable=self.currentPage, font=self.W_FONT3, bg=self.W_BG, fg=self.C_GREEN)
 
+        gamePhoto = PhotoImage(file="assets/images/boss.png", master=self.GameWindow)
+        gamePhoto = gamePhoto.subsample(1)
+        self.BossItem = Button(self.GameWindow, image=gamePhoto, bd=0, width=120, height=140)
+
         self.GameAssets = [self.GameTitle, self.GameSingleplayer, self.GameMultiplayer, self.GameCustomize, self.GameSettings, self.GameExitGame, self.GameUpdate]
         self.allFloors = None
         self.currentLevel = Levels(self.GameWindow, self)
@@ -150,6 +154,9 @@ class Game:
                             self.myPlayer().jump(1)
                         else:
                             self.myPlayer().jump(2)
+            elif event.keysym == 'Return':
+                self.drawPage(self.GamePage + 1)
+                self.GamePage += 1
 
         def handleLeftRelease(event):
             global keyPressedL, keyPressedR
@@ -167,6 +174,7 @@ class Game:
         self.GameWindow.bind('<Up>', handleKeyPress)
         self.GameWindow.bind('<Right>', handleKeyPress)
         self.GameWindow.bind('<Left>', handleKeyPress)
+        self.GameWindow.bind('<Return>', handleKeyPress)
         self.GameWindow.bind('<KeyRelease-Left>', handleLeftRelease)
         self.GameWindow.bind('<KeyRelease-Right>', handleRightRelease)
 
@@ -309,7 +317,7 @@ class Game:
                 if self.currentLevel.active():
                     if self.underPlate(p):
                         if self.currentLevel.checkColours:
-                            self.colourCheck(p)
+                            self.colourCheck()
                             self.currentLevel.checkColours = False
                         if playerLocation[1] < .71:
                             p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
@@ -323,6 +331,10 @@ class Game:
                 else:
                     if playerLocation[1] < .79:
                         p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
+            if self.GamePage == 6:
+                playerLocation = p.getLocation()
+                if playerLocation[1] < .79:
+                    p.setLocation(playerLocation[0], playerLocation[1] + 0.005)
 
     def underPlate(self, p):
         allPlates = self.currentLevel.plates()
@@ -332,7 +344,7 @@ class Game:
                     return True
         return False
 
-    def colourCheck(self, p):
+    def colourCheck(self):
         allPlates = self.currentLevel.plates()
         for plate in allPlates:
             if self.currentLevel.selectedColour == self.ColoursI[self.ColoursR.index(plate.cget('bg'))]:
@@ -389,9 +401,12 @@ class Game:
                     else:
                         self.drawPage(self.GamePage + 1)
                         self.GamePage += 1
+                        p.setLocation(0.05, playerLocation[1])
+                        print('act')
                 else:
                     self.drawPage(self.GamePage + 1)
                     self.GamePage += 1
+                    print('act2')
                     if self.GamePage == 5:
                         p.setLocation(0.09, playerLocation[1] - 0.15)
                     else:

@@ -33,6 +33,9 @@ class Player:
         if not self.PlayerHidden:
             self.PlayerItem.place(relx=self.getLocation()[0], rely=self.getLocation()[1])
 
+    def config(self, t):
+        self.PlayerItem.config(bg=t, fg=t)
+
     def jump(self, ty):
         self.PlayerJumping = True
         if ty == 1:

@@ -37,6 +37,7 @@ class REPEATED_TASK:
                 self.temporaryThread.start()
                 sleep(self.temporaryDelay)
             except RuntimeError:
+                self.threadRunning = False
                 break
 
     def stop(self):
