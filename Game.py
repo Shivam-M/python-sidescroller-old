@@ -35,7 +35,6 @@ from classes.tools.Tasker import REPEATED_TASK
 class Game:
     def __init__(self):
         self.W_BG = '#2F3542'
-        self.W_BG = '#141414'
         self.W_FG = '#FFFFFF'
         self.W_SIZE = '600x300'
         self.W_SIZE = '800x300'
@@ -403,11 +402,9 @@ class Game:
                         self.drawPage(self.GamePage + 1)
                         self.GamePage += 1
                         p.setLocation(0.05, playerLocation[1])
-                        print('act')
                 else:
                     self.drawPage(self.GamePage + 1)
                     self.GamePage += 1
-                    print('act2')
                     if self.GamePage == 5:
                         p.setLocation(0.09, playerLocation[1] - 0.15)
                     else:
