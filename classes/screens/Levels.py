@@ -43,6 +43,7 @@ class Levels:
         self.numGames = 0
         self.selectedColour = None
         self.mainEnemy = None
+        self.BossReady = False
 
         # Game Level 1:
         self.whiteFloor = Label(self.Window, bg=self.W_FG, height=3, width=200)
@@ -125,13 +126,16 @@ class Levels:
             self.chooser()
         elif levelNumber == 6:
             self.blackFloor.place(relx=.0, rely=.85)
-            self.GameInstance.BossItem.place(relx=.75, rely=.31)
-            self.Window.config(bg=self.C_RED)
-            self.GameInstance.myPlayer().config('#141414')
-            self.GameInstance.PlayerPosition.config(bg=self.C_RED, fg='#141414')
-            self.GameInstance.PlayerPage.config(bg=self.C_RED, fg='#141414')
-            Thread(target=self.bossAI).start()
-            # Thread(target=self.stutter).start()
+            if self.GameInstance.GameMode == 0:
+                self.GameInstance.BossItem.place(relx=.75, rely=.31)
+                self.Window.config(bg=self.C_RED)
+                self.GameInstance.myPlayer().config('#141414')
+                self.GameInstance.PlayerPosition.config(bg=self.C_RED, fg='#141414')
+                self.GameInstance.PlayerPage.config(bg=self.C_RED, fg='#141414')
+                Thread(target=self.bossAI).start()
+                # Thread(target=self.stutter).start()
+            else:
+                Thread(target=self.mpBoss).start()
 
     def bossAI(self):
         x = .75
@@ -150,6 +154,38 @@ class Levels:
                 time.sleep(0.002)
             else:
                 break
+        while True:
+            if y < .36:
+                y += 0.002
+                self.GameInstance.BossItem.place(relx=x, rely=y)
+                time.sleep(0.002)
+            else:
+                break
+
+    def bossAnim(self):
+        self.GameInstance.BossItem.place(relx=.75, rely=.31)
+        self.Window.config(bg=self.C_RED)
+        self.GameInstance.myPlayer().config('#141414')
+        self.GameInstance.PlayerPosition.config(bg=self.C_RED, fg='#141414')
+        self.GameInstance.PlayerPage.config(bg=self.C_RED, fg='#141414')
+        Thread(target=self.bossAI).start()
+
+    def readyBoss(self):
+        return self.BossReady
+
+    def mpBoss(self):
+        while True:
+            if self.BossReady:
+                try:
+                    notReady.place_forget()
+                except:
+                    pass
+                self.bossAnim()
+                break
+            else:
+                notReady = Label(self.Window, text='WAIT FOR YOUR TEAMMATE', font=self.W_FONT4, bg=self.W_BG, fg=self.C_BLUE)
+                notReady.place(relx=.05, rely=.2)
+            time.sleep(0.5)
 
     def stutter(self):
         while True:

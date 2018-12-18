@@ -71,8 +71,11 @@ class Host:
                             if arguments[0] != str(self.randomID):
                                 if arguments[1] == str(self.gameInstance.getPage()):
                                     if arguments[1] != '5':
-                                        self.otherPlayer.show()
-                                        self.otherPlayer.setLocation(round(float(arguments[2]), 2), round(float(arguments[3]), 2))
+                                        if arguments[1] != '6':
+                                            self.otherPlayer.show()
+                                            self.otherPlayer.setLocation(round(float(arguments[2]), 2), round(float(arguments[3]), 2))
+                                        else:
+                                            self.gameInstance.currentLevel.BossReady = True
                                     else:
                                         self.otherPlayer.hide()
                                 else:
@@ -121,8 +124,11 @@ class Join:
                 if arguments[0] != str(self.randomID):
                     if arguments[1] == str(self.gameInstance.getPage()):
                         if arguments[1] != '5':
-                            self.gameInstance.getPlayer().show()
-                            self.gameInstance.getPlayer().setLocation(round(float(arguments[2]), 2), round(float(arguments[3]), 2))
+                            if arguments[1] != '6':
+                                self.gameInstance.getPlayer().show()
+                                self.gameInstance.getPlayer().setLocation(round(float(arguments[2]), 2), round(float(arguments[3]), 2))
+                            else:
+                                self.gameInstance.currentLevel.BossReady = True
                         else:
                             self.gameInstance.getPlayer().hide()
                     else:
